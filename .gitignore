@@ -1,3 +1,5 @@
 download/
 upload/
 node_modules/
+.ftppass
+.grunt

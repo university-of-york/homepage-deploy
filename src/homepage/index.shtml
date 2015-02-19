@@ -122,15 +122,7 @@
                                 </form>
                             </div>
 
-                            <div class="banner-story">
-                                <h4><a href="#">Masters taster sessions</a></h4>
-                                <p>Get a taste of postgraduate study at York at one of our online sessions.</p>
-                            </div>
-
-                            <div class="banner-story">
-                                <h4><a href="#">Postgraduate Virtual Open Days in February</a></h4>
-                                <p>Learn about our courses and discover what we have to offer.</p>
-                            </div>
+                            <!--(bake /download/sidebar.html)-->
                         </div>
                     </div>
                 </div>
@@ -166,51 +158,7 @@
 
                         <h2>Explore York</h2>
                         <div id="homepage-promos">
-                            <div class="col-1-4">
-                                <div class="l-block content-box clear-self">
-                                    <a href="/campus-investment/"><img src="/np/images/content/promo/campus_investment_204x112.jpg" width="204" height="112" alt="" />
-                                    </a>
-                                    <h3><a href="/campus-investment/">Investing in our campus</a></h3>
-                                    <p>We're growing fast and investing accordingly - £750 million in the last 10 years.</p>
-                                    <p class="cta">
-                                        <a href="/campus-investment/">See how campus is changing</a>
-                                    </p>
-                                </div>
-                            </div>
-
-                            <div class="col-1-4">
-                                <div class="l-block content-box clear-self">
-                                    <a href="/study/student-life/york-yorkshire/"><img src="/np/images/content/promo/york_minster_204x112.jpg" width="204" height="112" alt="" />
-                                    </a>
-                                    <h3><a href="/study/student-life/york-yorkshire/">The city of York</a></h3>
-                                    <p>Our beautiful, vibrant city is regularly cited as one of the best cities to live in the UK.</p>
-                                    <p class="cta">
-                                        <a href="/study/student-life/york-yorkshire/">Explore the city</a>
-                                    </p>
-                                </div>
-                            </div>
-                            <div class="col-1-4">
-                                <div class="l-block content-box clear-self">
-                                    <a href="http://www.york.ac.uk/news-and-events/events/public-lectures/"><img src="/np/images/content/promo/public-lectures-1.jpg" width="204" height="112" alt="" />
-                                    </a>
-                                    <h3><a href="http://www.york.ac.uk/news-and-events/events/public-lectures/">Lectures: not just for students</a></h3>
-                                    <p>Every term we organise talks on a wide variety of topics, all open to the public and free to attend.</p>
-                                    <p class="cta">
-                                        <a href="http://www.york.ac.uk/news-and-events/events/public-lectures/">See our upcoming lectures</a>
-                                    </p>
-                                </div>
-                            </div>
-                            <div class="col-1-4">
-                                <div class="l-block content-box clear-self">
-                                    <a href="http://www.york.ac.uk/study/student-life/sport/"><img src="/np/images/content/promo/sport.jpg" width="204" height="112" alt="" />
-                                    </a>
-                                    <h3><a href="http://www.york.ac.uk/study/student-life/sport/">A sporting tradition</a></h3>
-                                    <p>With £9m of new facilities and over 60 sports clubs, we cater for sport at all levels.</p>
-                                    <p class="cta">
-                                        <a href="http://www.york.ac.uk/study/student-life/sport/">Find out about sport at York</a>
-                                    </p>
-                                </div>
-                            </div>
+                          <!--(bake /download/discover.html)-->
 
                         </div>
                     </div>

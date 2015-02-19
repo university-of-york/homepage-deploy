@@ -2,6 +2,7 @@ module.exports = function(grunt) {
 
 	//get path value from command line 'grunt --path=pathname'
 	var datepath = grunt.option('path');
+	var snippetsURL = 'http://www.york.ac.uk/homepage-snippets/';
 
 	// Project configuration.
 	grunt.initConfig({
@@ -11,15 +12,19 @@ module.exports = function(grunt) {
 
 		curl: {
 			'main': {
-				src: 'http://www.york.ac.uk/homepage-snippets/'+datepath+'/main/index.html',
+				src: snippetsURL + datepath + '/main/',
 				dest: 'download/main.html'
 			},
+			'sidebar': {
+				src: snippetsURL + datepath + '/sidebar/',
+				dest: 'download/sidebar.html'
+			},
 			'research': {
-				src: 'http://www.york.ac.uk/homepage-snippets/'+datepath+'/research/index.html',
+				src: snippetsURL + datepath + '/research/',
 				dest: 'download/research.html'
 			},
 			'discover': {
-				src: 'http://www.york.ac.uk/homepage-snippets/'+datepath+'/discover/index.html',
+				src: snippetsURL + datepath + '/discover/',
 				dest: 'download/discover.html'
 			}
 
@@ -32,7 +37,7 @@ module.exports = function(grunt) {
 			}
 		},
 		replace: {
-  		another_example: {
+  		media_paths: {
     		src: ['upload/index.shtml'],
     		overwrite: true,                 // overwrite matched source files
     		replacements: [{
@@ -40,9 +45,19 @@ module.exports = function(grunt) {
       		to: '="http://www.york.ac.uk/media'
     		}]
   		}
+		},
+		ftpush: {
+			test: {
+				auth: {
+					host: 'ftp.york.ac.uk',
+					port: 21,
+					authKey: 'key1'
+				},
+				src: 'upload',
+				dest: '/usr/yorkwebtest/wwwtest.york.ac.uk/np/',
+				simple: 'true'
+			}
 		}
-
-
 	});
 
 
@@ -56,7 +71,7 @@ module.exports = function(grunt) {
 	//Tasks
 
 
-	grunt.registerTask('default',['clean','curl', 'bake', 'replace']);
+	grunt.registerTask('default',['clean','curl', 'bake', 'replace','ftpush']);
 
 
 
