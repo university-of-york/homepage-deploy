@@ -32,7 +32,7 @@ From your local copy of the repository, run
 
 eg 
 
-`grunt --path=2015/2015-02-16`
+`grunt --path=2015/02/16`
 
 This will take a copy of the HTML published from the CMS, incorporate it into index.shtml and upload the result to [http://wwwtest.york.ac.uk](http://wwwtest.york.ac.uk).
 
