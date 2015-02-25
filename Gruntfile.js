@@ -26,7 +26,16 @@ module.exports = function(grunt) {
 			'discover': {
 				src: snippetsURL + datepath + '/discover/',
 				dest: 'download/discover.html'
-			}
+			}/*,
+			'homepage_only_css':{
+				src: 'https://raw.githubusercontent.com/university-of-york/homepage-redesign/master/src/css/homepage_only.css',
+				dest: 'upload/css/homepage_only.css'
+			},
+			'york_styles_css': {
+				src: 'https://raw.githubusercontent.com/university-of-york/homepage-redesign/master/src/css/york_styles.css',
+				dest: 'upload/css/york_styles.css'
+			}*/
+
 
 		},
 		bake: {
@@ -69,8 +78,6 @@ module.exports = function(grunt) {
 
 
 	//Tasks
-
-
 	grunt.registerTask('default',['clean','curl', 'bake', 'replace','ftpush']);
 
 
