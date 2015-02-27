@@ -1,41 +1,47 @@
 module.exports = function(grunt) {
 
 	//get path value from command line 'grunt --path=pathname'
-	var datepath = grunt.option('path');
+	//var datepath = grunt.option('path');
+
 	var snippetsURL = 'http://www.york.ac.uk/homepage-snippets/';
 
 	// Project configuration.
 	grunt.initConfig({
 		pkg: grunt.file.readJSON('package.json'),
 
+		prompt: {
+			curl: {
+				options: {
+					questions : [
+						{
+								config: 'datepath',
+								type: 'input',
+								message: 'Enter the path to the snippets (eg 2015/02/16)'
+						}
+					]
+				}
+			}
+		},
+
 		clean: ['download','upload'],
 
 		curl: {
 			'main': {
-				src: snippetsURL + datepath + '/main/',
+				src: snippetsURL + '<%=grunt.config("datepath")%>' + '/main/',
 				dest: 'download/main.html'
 			},
 			'sidebar': {
-				src: snippetsURL + datepath + '/sidebar/',
+				src: snippetsURL + '<%=grunt.config("datepath")%>' + '/sidebar/',
 				dest: 'download/sidebar.html'
 			},
 			'research': {
-				src: snippetsURL + datepath + '/research/',
+				src: snippetsURL + '<%=grunt.config("datepath")%>' + '/research/',
 				dest: 'download/research.html'
 			},
 			'discover': {
-				src: snippetsURL + datepath + '/discover/',
+				src: snippetsURL + '<%=grunt.config("datepath")%>' + '/discover/',
 				dest: 'download/discover.html'
-			}/*,
-			'homepage_only_css':{
-				src: 'https://raw.githubusercontent.com/university-of-york/homepage-redesign/master/src/css/homepage_only.css',
-				dest: 'upload/css/homepage_only.css'
-			},
-			'york_styles_css': {
-				src: 'https://raw.githubusercontent.com/university-of-york/homepage-redesign/master/src/css/york_styles.css',
-				dest: 'upload/css/york_styles.css'
-			}*/
-
+			}
 
 		},
 		bake: {
@@ -78,7 +84,8 @@ module.exports = function(grunt) {
 
 
 	//Tasks
-	grunt.registerTask('default',['clean','curl', 'bake', 'replace','ftpush']);
+	//grunt.registerTask('default',['clean','curl', 'bake', 'replace','ftpush']);
+	grunt.registerTask('default',['prompt','clean','curl', 'bake', 'replace']);
 
 
 
