@@ -25,16 +25,14 @@ In the root of the repository, create a file called .ftppass, paste in the code 
   		}
 
 ##Day-to-day usage
+### Step 1: Make your changes in the CMS and wait for them to publish
 Content needs to have published from the CMS before it can be included in the homepage.
+###Step 2: Deploy to wwwtest
 
-From your local copy of the repository, run
+From your local copy of the repository, run `grunt test`.
 
-`grunt --path=PATHNAME`
+When prompted, enter the path to the published snippets, eg `2015/02/16`.
 
-eg 
-
-`grunt --path=2015/02/16`
-
-This will take a copy of the HTML published from the CMS, incorporate it into index.shtml and upload the result to [http://wwwtest.york.ac.uk](http://wwwtest.york.ac.uk).
-
-Once you're happy with how that looks, run `TBC` to make the changes live. 
+This will take a copy of the HTML published from the CMS, incorporate it into index.shtml in the 'upload' folder, and FTP the result to [http://wwwtest.york.ac.uk](http://wwwtest.york.ac.uk).
+###Step 3: Deploy to live
+Run `grunt live` to make the changes live. You'll be asked to confirm this step. 

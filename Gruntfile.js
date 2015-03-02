@@ -1,7 +1,5 @@
 module.exports = function(grunt) {
 
-	//get path value from command line 'grunt --path=pathname'
-	//var datepath = grunt.option('path');
 
 	var snippetsURL = 'http://www.york.ac.uk/homepage-snippets/';
 
@@ -16,7 +14,7 @@ module.exports = function(grunt) {
 						{
 								config: 'datepath',
 								type: 'input',
-								message: 'Enter the path to the snippets (eg 2015/02/16)'
+								message: 'Enter the path to the snippets (eg 2015/02/16): '
 						}
 					]
 				}
@@ -57,7 +55,7 @@ module.exports = function(grunt) {
     		overwrite: true,                 // overwrite matched source files
     		replacements: [{
       		from: '="/media',
-      		to: '="http://www.york.ac.uk/media'
+      		to: '="//www.york.ac.uk/media' 
     		}]
   		}
 		},
@@ -72,7 +70,27 @@ module.exports = function(grunt) {
 				dest: '/usr/yorkwebtest/wwwtest.york.ac.uk/np/',
 				simple: 'true'
 			}
-		}
+		},
+		open: {
+			test: {
+				path: 'http://wwwtest.york.ac.uk'
+			},
+			live: {
+				path:'http://www.york.ac.uk'
+			}
+
+		},
+		confirm: {
+    	ftpush: {
+      	options: {
+        	// Static text.
+        	question: 'This will deploy your local copy of index.shtml to the live site.\nHave you tested it? If in doubt, run "grunt test" again. (y/n)',
+        	continue: function(answer) {
+          	return answer.toLowerCase() === 'y';
+        	}
+      	}
+    	}
+  	},
 	});
 
 
@@ -80,13 +98,13 @@ module.exports = function(grunt) {
 	// Load the plugins
 	//Using load-grunt-tasks instead of having a loadNpmTasks line for each plugin
 	require('load-grunt-tasks')(grunt);
-	require('time-grunt')(grunt);
+	//require('time-grunt')(grunt);
 
 
 	//Tasks
-	//grunt.registerTask('default',['clean','curl', 'bake', 'replace','ftpush']);
-	grunt.registerTask('default',['prompt','clean','curl', 'bake', 'replace']);
-
+	//ftpush tasks to be added back in
+	grunt.registerTask('test',['prompt','clean','curl', 'bake', 'replace','open:test']);
+	grunt.registerTask('live',['confirm','open:live'])
 
 
 
