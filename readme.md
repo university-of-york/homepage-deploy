@@ -8,7 +8,7 @@ To install Grunt, type:
 `npm install -g grunt-cli`  
 *You may find that this is a lot less straightforward than it looks on managed Windows machines.*
 * __Clone the respository__  
-`git clone https://github.com/university-of-york/TBC homepage-deploy`
+`git clone https://github.com/university-of-york/homepage-deploy.git homepage-deploy`
 * __Install dependencies__  
 From your local clone of the repository, run:
 `npm install`.
