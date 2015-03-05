@@ -24,41 +24,64 @@ module.exports = function(grunt) {
 		clean: ['download','upload'],
 
 		curl: {
+			'template': {
+				src: 'http://www.york.ac.uk/np/index_template_live.shtml',
+				dest: 'download/index_template.shtml'
+			},
 			'main': {
 				src: snippetsURL + '<%=grunt.config("datepath")%>' + '/main/',
-				dest: 'download/main.html'
+				dest: 'download/main/index.html'
 			},
 			'sidebar': {
 				src: snippetsURL + '<%=grunt.config("datepath")%>' + '/sidebar/',
-				dest: 'download/sidebar.html'
+				dest: 'download/sidebar/index.html'
 			},
 			'research': {
 				src: snippetsURL + '<%=grunt.config("datepath")%>' + '/research/',
-				dest: 'download/research.html'
+				dest: 'download/research/index.html'
 			},
 			'discover': {
 				src: snippetsURL + '<%=grunt.config("datepath")%>' + '/discover/',
-				dest: 'download/discover.html'
+				dest: 'download/discover/index.html'
 			}
 
 		},
+
 		bake: {
 			build: {
 				files: {
-					"upload/index.shtml": "src/homepage/index.shtml"
+					"upload/index.shtml": "download/index_template.shtml"
 				}
 			}
 		},
+
 		replace: {
+			news_include: {
+    		src: ['download/index_template.shtml'],
+    		overwrite: true,                 // overwrite matched source files
+    		replacements: [{
+      		from: '<!--(bake path-to-snippets/news/index.html)-->',
+      		to: '<!--#include virtual="/news-and-events/snippets/news/" -->'
+    		}]
+  		},
+			snippets_path: {
+    		src: ['download/index_template.shtml'],
+    		overwrite: true,                 // overwrite matched source files
+    		replacements: [{
+      		from: 'path-to-snippets/',
+      		to: ''
+    		}]
+  		},
   		media_paths: {
     		src: ['upload/index.shtml'],
     		overwrite: true,                 // overwrite matched source files
     		replacements: [{
       		from: '="/media',
-      		to: '="//www.york.ac.uk/media' 
+      		to: '="//www.york.ac.uk/media'
     		}]
   		}
 		},
+
 		ftpush: {
 			test: {
 				auth: {
@@ -69,8 +92,19 @@ module.exports = function(grunt) {
 				src: 'upload',
 				dest: '/usr/yorkwebtest/wwwtest.york.ac.uk/np/',
 				simple: 'true'
-			}
+			},
+      live: {
+        auth: {
+          host: 'ftp.york.ac.uk',
+          port: 21,
+          authKey: 'key1'
+        },
+        src: 'upload',
+        dest: '.',
+        simple: 'true'
+      }
 		},
+
 		open: {
 			test: {
 				path: 'http://wwwtest.york.ac.uk'
@@ -80,6 +114,7 @@ module.exports = function(grunt) {
 			}
 
 		},
+
 		confirm: {
     	ftpush: {
       	options: {
@@ -102,11 +137,21 @@ module.exports = function(grunt) {
 
 
 	//Tasks
-	//ftpush tasks to be added back in
-	grunt.registerTask('test',['prompt','clean','curl', 'bake', 'replace','open:test']);
-	grunt.registerTask('live',['confirm','open:live'])
 
-
-
-
+	grunt.registerTask('test',[
+		'prompt',
+		'clean',
+		'curl',
+		'replace:news_include',
+		'replace:snippets_path',
+		'bake',
+		'replace:media_paths',
+		'ftpush:test',
+		'open:test'
+	]);
+	grunt.registerTask('live',[
+		'confirm',
+//	'ftpush:live',	
+		'open:live'
+	])
 };
