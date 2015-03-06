@@ -2,6 +2,13 @@ module.exports = function(grunt) {
 
 
 	var snippetsURL = 'http://www.york.ac.uk/homepage-snippets/';
+	var currentDate = new Date();
+	var dateStamp =  currentDate.getFullYear() + "_"
+                + (currentDate.getMonth()+1)  + "_"
+                + currentDate.getDate() + "_"
+                + currentDate.getHours() +
+                + currentDate.getMinutes() +
+                + currentDate.getSeconds();
 
 	// Project configuration.
 	grunt.initConfig({
@@ -105,6 +112,22 @@ module.exports = function(grunt) {
       }
 		},
 
+		autoshot: {
+			live: {
+				options: {
+					path: 'upload/screenshots',
+					remote: {
+						files: [
+							{
+								src:'http://www.york.ac.uk',
+								dest: 'homepage_' + dateStamp +'.png'
+							}
+						]
+					}
+				}
+			}
+		},
+
 		open: {
 			test: {
 				path: 'http://wwwtest.york.ac.uk'
@@ -146,12 +169,13 @@ module.exports = function(grunt) {
 		'replace:snippets_path',
 		'bake',
 		'replace:media_paths',
+		'autoshot',
 		'ftpush:test',
 		'open:test'
 	]);
 	grunt.registerTask('live',[
 		'confirm',
-//	'ftpush:live',	
+//	'ftpush:live',
 		'open:live'
 	])
 };
