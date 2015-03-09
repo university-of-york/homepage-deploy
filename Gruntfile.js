@@ -3,9 +3,9 @@ module.exports = function(grunt) {
 
 	var snippetsURL = 'http://www.york.ac.uk/homepage-snippets/';
 	var currentDate = new Date();
-	var dateStamp =  currentDate.getFullYear() + "_"
-                + (currentDate.getMonth()+1)  + "_"
-                + currentDate.getDate() + "_"
+	var dateStamp =  currentDate.getFullYear() + '_'
+                + ('0' + (currentDate.getMonth()+1)).slice(-2) + '_'
+                + ('0' + currentDate.getDate()).slice(-2) + '_'
                 + currentDate.getHours() +
                 + currentDate.getMinutes() +
                 + currentDate.getSeconds();
@@ -106,10 +106,20 @@ module.exports = function(grunt) {
           port: 21,
           authKey: 'key1'
         },
-        src: 'upload',
+        src: 'upload/index.shtml',
         dest: '.',
         simple: 'true'
-      }
+      },
+			screenshot: {
+				auth: {
+					host: 'ftp.york.ac.uk',
+					port: 21,
+					authKey: 'key1'
+				},
+				src: 'upload/screenshots',
+				dest: 'screenshots',
+				simple: 'true'
+			},
 		},
 
 		autoshot: {
@@ -176,6 +186,8 @@ module.exports = function(grunt) {
 	grunt.registerTask('live',[
 		'confirm',
 //	'ftpush:live',
+		'autoshot',
+  	'ftpush:screenshot',
 		'open:live'
 	])
 };
