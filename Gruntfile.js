@@ -116,7 +116,7 @@ module.exports = function(grunt) {
 					port: 21,
 					authKey: 'key1'
 				},
-				src: 'upload/screenshots',
+				src: 'upload/screenshots/',
 				dest: 'screenshots',
 				simple: 'true'
 			},
@@ -130,10 +130,12 @@ module.exports = function(grunt) {
 						files: [
 							{
 								src:'http://www.york.ac.uk',
-								dest: 'homepage_' + dateStamp +'.png'
+								dest: 'homepage_' + dateStamp +'.png',
+								delay:1000
 							}
 						]
-					}
+					},
+					viewport: ['1024x1300']
 				}
 			}
 		},
