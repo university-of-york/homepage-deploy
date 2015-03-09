@@ -1,7 +1,7 @@
 #Deploying homepage changes
 
 ##One-off setup
-1. __Install NodeJS and Git__  
+1. __Install NodeJS, Git and PhantomJS__  
 If you don't already have them, download them directly or via your favourite package manager.
 * __Install Grunt__  
 To install Grunt, type:
@@ -33,4 +33,4 @@ When prompted, enter the path to the published snippets, eg `2015/02/16`.
 
 This will take a copy of the HTML published from the CMS, incorporate it into index.shtml in the 'upload' folder, and FTP the result to [http://wwwtest.york.ac.uk](http://wwwtest.york.ac.uk).
 ###Step 3: Deploy to live
-Run `grunt live` to make the changes live. You'll be asked to confirm this step. 
+Run `grunt live` to make the changes live. You'll be asked to confirm this step.
