@@ -181,7 +181,6 @@ module.exports = function(grunt) {
 		'replace:snippets_path',
 		'bake',
 		'replace:media_paths',
-		'autoshot',
 		'ftpush:test',
 		'open:test'
 	]);
