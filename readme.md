@@ -34,3 +34,5 @@ When prompted, enter the path to the published snippets, eg `2015/02/16`.
 This will take a copy of the HTML published from the CMS, incorporate it into index.shtml in the 'upload' folder, and FTP the result to [http://wwwtest.york.ac.uk](http://wwwtest.york.ac.uk).
 ###Step 3: Deploy to live
 Run `grunt live` to make the changes live. You'll be asked to confirm this step.
+
+Once the changes are live, a screenshot of the homepage will be taken and stored in [http://www.york.ac.uk/np/screenshots](http://www.york.ac.uk/np/screenshots).
