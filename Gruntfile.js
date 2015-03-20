@@ -186,7 +186,7 @@ module.exports = function(grunt) {
 	]);
 	grunt.registerTask('live',[
 		'confirm',
-//	'ftpush:live',
+		'ftpush:live',
 		'autoshot',
   	'ftpush:screenshot',
 		'open:live'
