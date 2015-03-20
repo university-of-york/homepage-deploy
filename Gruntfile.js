@@ -106,7 +106,7 @@ module.exports = function(grunt) {
           port: 21,
           authKey: 'key1'
         },
-        src: 'upload/index.shtml',
+        src: 'upload/',
         dest: '.',
         simple: 'true'
       },
