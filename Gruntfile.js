@@ -89,37 +89,34 @@ module.exports = function(grunt) {
   		}
 		},
 
-		ftpush: {
+		'sftp-deploy': {
 			test: {
 				auth: {
-					host: 'ftp.york.ac.uk',
-					port: 21,
+					host: 'sftp.york.ac.uk',
+					port: 22,
 					authKey: 'key1'
 				},
 				src: 'upload',
-				dest: '/usr/yorkwebtest/wwwtest.york.ac.uk/np/',
-				simple: 'true'
+				dest: '/usr/yorkwebtest/wwwtest.york.ac.uk/np/'
 			},
       live: {
         auth: {
-          host: 'ftp.york.ac.uk',
-          port: 21,
+          host: 'sftp.york.ac.uk',
+          port: 22,
           authKey: 'key1'
         },
         src: 'upload/',
-        dest: '.',
-        simple: 'true'
+        dest: '.'
       },
 			screenshot: {
 				auth: {
-					host: 'ftp.york.ac.uk',
-					port: 21,
+					host: 'sftp.york.ac.uk',
+					port: 22,
 					authKey: 'key1'
 				},
 				src: 'upload/screenshots/',
-				dest: 'screenshots',
-				simple: 'true'
-			},
+				dest: 'screenshots'
+			}
 		},
 
 		autoshot: {
@@ -151,7 +148,7 @@ module.exports = function(grunt) {
 		},
 
 		confirm: {
-    	ftpush: {
+    	'sftp-deploy': {
       	options: {
         	// Static text.
         	question: 'This will deploy your local copy of index.shtml to the live site.\nHave you tested it? If in doubt, run "grunt test" again. (y/n)',
@@ -160,7 +157,7 @@ module.exports = function(grunt) {
         	}
       	}
     	}
-  	},
+  	}
 	});
 
 
@@ -181,14 +178,14 @@ module.exports = function(grunt) {
 		'replace:snippets_path',
 		'bake',
 		'replace:media_paths',
-		'ftpush:test',
+		'sftp-deploy:test',
 		'open:test'
 	]);
 	grunt.registerTask('live',[
 		'confirm',
-		'ftpush:live',
+		'sftp-deploy:live',
 		'autoshot',
-  	'ftpush:screenshot',
+  	'sftp-deploy:screenshot',
 		'open:live'
-	])
+	]);
 };
