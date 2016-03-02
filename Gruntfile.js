@@ -89,33 +89,46 @@ module.exports = function(grunt) {
   		}
 		},
 
-		'sftp-deploy': {
+		credentials: grunt.file.readJSON('.ftppass'),
+		sftp: {
 			test: {
-				auth: {
-					host: 'sftp.york.ac.uk',
-					port: 22,
-					authKey: 'key1'
+				files : {
+					'./': 'upload/index.shtml'
 				},
-				src: 'upload',
-				dest: '/usr/yorkwebtest/wwwtest.york.ac.uk/np/'
+				options: {
+					path: '/usr/yorkwebtest/wwwtest.york.ac.uk/np/',
+					host: 'sftp.york.ac.uk',
+					username: '<%= credentials.key1.username %>',
+					password: '<%= credentials.key1.password %>',
+					srcBasePath: 'upload/',
+					showProgress: true
+				}
 			},
-      live: {
-        auth: {
-          host: 'sftp.york.ac.uk',
-          port: 22,
-          authKey: 'key1'
-        },
-        src: 'upload/',
-        dest: '.'
-      },
-			screenshot: {
-				auth: {
-					host: 'sftp.york.ac.uk',
-					port: 22,
-					authKey: 'key1'
+			live: {
+				files : {
+					'./': 'upload/index.shtml'
 				},
-				src: 'upload/screenshots/',
-				dest: 'screenshots'
+				options: {
+					path: '.',
+					host: 'sftp.york.ac.uk',
+					username: '<%= credentials.key1.username %>',
+					password: '<%= credentials.key1.password %>',
+					srcBasePath: 'upload/',
+					showProgress: true
+				}
+			},
+			screenshot: {
+				files : {
+					'./': 'upload/screenshots/**'
+				},
+				options: {
+					path: 'screenshots',
+					host: 'sftp.york.ac.uk',
+					username: '<%= credentials.key1.username %>',
+					password: '<%= credentials.key1.password %>',
+					srcBasePath: 'upload/screenshots',
+					showProgress: true
+				}
 			}
 		},
 
@@ -148,7 +161,7 @@ module.exports = function(grunt) {
 		},
 
 		confirm: {
-    	'sftp-deploy': {
+    	sftp: {
       	options: {
         	// Static text.
         	question: 'This will deploy your local copy of index.shtml to the live site.\nHave you tested it? If in doubt, run "grunt test" again. (y/n)',
@@ -178,14 +191,14 @@ module.exports = function(grunt) {
 		'replace:snippets_path',
 		'bake',
 		'replace:media_paths',
-		'sftp-deploy:test',
+		'sftp:test',
 		'open:test'
 	]);
 	grunt.registerTask('live',[
 		'confirm',
-		'sftp-deploy:live',
+		'sftp:live',
 		'autoshot',
-  	'sftp-deploy:screenshot',
+		'sftp:screenshot',
 		'open:live'
 	]);
 };
