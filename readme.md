@@ -36,7 +36,7 @@ This will take a copy of the HTML published from the CMS, incorporate it into in
 #### Making minor amends
 If you need to make a minor amend (eg correcting a typo) at this stage, you can edit your local copy rather than editing the published snippets or waiting for a republish.
 
-Make your changes to upload/index.shtml, then run `grunt sftp-deploy:test`.
+Make your changes to upload/index.shtml, then run `grunt sftp:test`.
 
 
 ###Step 3: Deploy to live
