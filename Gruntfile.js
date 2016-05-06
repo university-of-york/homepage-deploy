@@ -50,8 +50,11 @@ module.exports = function(grunt) {
 			'discover': {
 				src: snippetsURL + '<%=grunt.config("datepath")%>' + '/discover/',
 				dest: 'download/discover/index.html'
+			},
+			'festival': {
+				src: snippetsURL + '<%=grunt.config("datepath")%>' + '/festival/',
+				dest: 'download/festival/index.html'
 			}
-
 		},
 
 		bake: {
