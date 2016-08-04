@@ -20,19 +20,15 @@ module.exports = function(grunt) {
     // Precompile Handlebars templates
     var layoutsDir = this.data.layoutsDir;
     function compileTemplate(templateName) {
-      var templatePath = Path.resolve(layoutsDir, templateName);
-      var template;
-      Fs.readFile(templatePath, 'utf-8', function(err, data) {
-        if (err) throw err;
-        console.log(data);
-        template = Handlebars.compile(data);
+      return new Promise(function(resolve) {
+        var templatePath = Path.resolve(layoutsDir, templateName);
+        Fs.readFile(templatePath, 'utf-8', function(err, data) {
+          if (err) throw err;
+          var template = Handlebars.compile(data);
+          resolve(template);
+        });
       });
-      return template;
     }
-
-    compileTemplate('banner.hbs');
-    compileTemplate('research.hbs');
-    compileTemplate('news.hbs');
 
     // Pass in the content_type needed, i.e. 'mastheadItem', 'researchStory' or 'newsStory'
     function makeUrl(contentType) {
@@ -61,27 +57,38 @@ module.exports = function(grunt) {
     var newsUrl = makeUrl('newsStory');
     var newsRequest = Request(newsUrl);
 
+    // Precompile templates
+    var bannerTemplate = compileTemplate('banner.hbs');
+    var researchTemplate = compileTemplate('research.hbs');
+    var newsTemplate = compileTemplate('news.hbs');
+
     // Run all requests simultaneously
     Bluebird.all([mastheadRequest, researchRequest, newsRequest])
     .spread(function (mastheadResponse, researchResponse, newsResponse) {
       // All requests succeeded.
       var mJSON = JSON.parse(mastheadResponse);
       mJSON.items.forEach(function(item, i) {
-        grunt.log.writeln('Make banner with "'+item.fields.title+'"');
+        // TODO Need to do banner image asset
+        var bannerContext = {
+          bannerImage: 'https://unsplash.it/1200/800/?random',
+          title: item.fields.title,
+          excerpt: item.fields.excerpt,
+          buttonLink: item.fields.buttonLink,
+          buttonText: item.fields.buttonText
+        };
+        // var bannerHtml = bannerTemplate(bannerContext);
+        grunt.log.writeln(bannerTemplate);
       });
-      // grunt.log.writeln(Path.resolve(this.data.layoutsDir, 'banner.hbs'));
       // grunt.log.writeln(Path.resolve(this.data.targetDir, 'banner/index.html'));
       var rJSON = JSON.parse(researchResponse);
       rJSON.items.forEach(function(item, i) {
         grunt.log.writeln('Make research item with "'+item.fields.title+'"');
       });
-      // grunt.log.writeln(Path.resolve(this.data.layoutsDir, 'research.hbs'));
       // grunt.log.writeln(Path.resolve(this.data.targetDir, 'research/index.html'));
       var nJSON = JSON.parse(newsResponse);
       nJSON.items.forEach(function(item, i) {
         grunt.log.writeln('Make news item with "'+item.fields.title+'"');
       });
-      // grunt.log.writeln(Path.resolve(this.data.layoutsDir, 'news.hbs'));
       // grunt.log.writeln(Path.resolve(this.data.targetDir, 'news/index.html'));
     })
     .catch(function (err) {
