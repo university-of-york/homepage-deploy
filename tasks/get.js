@@ -3,17 +3,40 @@
 var Fs = require('fs');
 var Path = require('path');
 var Mkdirp = require('mkdirp');
+var Moment = require('moment');
 var Marked = require('marked');
 var Request = require('request-promise');
 var Bluebird = require('bluebird');
 var Handlebars = require('handlebars');
+
+// format an ISO date using Moment.js
+// usage: {{dateFormat dateString format="MMMM YYYY"}}
+Handlebars.registerHelper('dateFormat', function(context, block) {
+  var f = block.hash.format || "D MMM YYYY";
+  return Moment(context).format(f);
+});
+
+// Get icon name from category
+// usage: {{iconify categoryName}}
+Handlebars.registerHelper('iconify', function(context) {
+  switch (context) {
+    case 'News':
+      return 'news';
+    case 'Event':
+      return 'event';
+    case 'Comment':
+      return 'comment';
+    default:
+      return 'bicycle';
+  }
+});
 
 module.exports = function(grunt) {
 
   grunt.registerMultiTask('get', 'Get data from (Contentful) API', function() {
 
     var done = this.async();
-    // Contentful CDN:
+    // Contentful CDN URL:
     // https://cdn.contentful.com/spaces/spaceId/entries?access_token=accessToken&content_type=newsStory
     var credentials = grunt.file.readJSON('.ftppass');
     var spaceId = credentials.contentful.spaceId;
@@ -119,12 +142,17 @@ module.exports = function(grunt) {
       .spread(function (researchTemplate, researchResponse) {
         // All requests succeeded.
         var researchJSON = JSON.parse(researchResponse);
+        var researchAssets = researchJSON.includes.Asset;
         function makeResearchItem(researchItem, i) {
           var researchHtml = '<!-- no story -->';
           if (researchItem !== false) {
+            var imageMeta = researchItem.fields.image.sys;
+            var thisAsset = researchAssets.filter(function(asset, j) {
+              return asset.sys.id === imageMeta.id;
+            });
             // TODO Need to do research image asset
             var researchContext = {
-              image: 'https://unsplash.it/1200/800/?random',
+              image: thisAsset[0].fields.file.url,
               title: researchItem.fields.title,
               excerpt: Marked(researchItem.fields.excerpt),
               link: researchItem.fields.link
@@ -151,7 +179,6 @@ module.exports = function(grunt) {
     // Get news stories
     var newsCompile = compileTemplate('news.hbs');
     var newsUrl = makeUrl('newsStory');
-    grunt.log.ok(newsUrl);
     var newsRequest = Request(newsUrl);
 
     // News items creation
@@ -161,13 +188,18 @@ module.exports = function(grunt) {
       .spread(function (newsTemplate, newsResponse) {
         // All requests succeeded.
         var newsJSON = JSON.parse(newsResponse);
+        var newsAssets = newsJSON.includes.Asset;
         function makeNewsItem(newsItem, i) {
           var newsHtml = '<!-- no story -->';
           if (newsItem !== false) {
-            // TODO Need to do news image asset
+            var imageMeta = newsItem.fields.image.sys;
+            var thisAsset = newsAssets.filter(function(asset, j) {
+              return asset.sys.id === imageMeta.id;
+            });
+            grunt.log.writeln(thisAsset[0].fields.file.url);
             // TODO Need to get category Entry
             var newsContext = {
-              image: 'https://unsplash.it/1200/800/?random',
+              image: thisAsset[0].fields.file.url,
               title: newsItem.fields.title,
               excerpt: Marked(newsItem.fields.excerpt),
               link: newsItem.fields.link,
