@@ -13,8 +13,9 @@ module.exports = function(grunt) {
     var done = this.async();
     // Contentful CDN:
     // https://cdn.contentful.com/spaces/spaceId/entries?access_token=accessToken&content_type=newsStory
-    var spaceId = 'al45u4mzjr2y';
-    var accessToken = '7d52070d1ba9e2117797f6fc434e3274667c98f5186b546a19345f5757f63565';
+    var credentials = grunt.file.readJSON('.ftppass');
+    var spaceId = credentials.contentful.spaceId;
+    var accessToken = credentials.contentful.accessToken;
     var apiUrl = 'https://cdn.contentful.com/spaces/'+spaceId+'/entries?access_token='+accessToken;
 
     // Precompile Handlebars templates
@@ -47,6 +48,11 @@ module.exports = function(grunt) {
       return encodeURI(url);
     }
 
+    // Precompile templates
+    var bannerPrecompile = compileTemplate('banner.hbs');
+    var researchPrecompile = compileTemplate('research.hbs');
+    var newsPrecompile = compileTemplate('news.hbs');
+
     // Get masthead item
     var mastheadUrl = makeUrl('mastheadItem');
     var mastheadRequest = Request(mastheadUrl);
@@ -57,14 +63,28 @@ module.exports = function(grunt) {
     var newsUrl = makeUrl('newsStory');
     var newsRequest = Request(newsUrl);
 
-    // Precompile templates
-    var bannerTemplate = compileTemplate('banner.hbs');
-    var researchTemplate = compileTemplate('research.hbs');
-    var newsTemplate = compileTemplate('news.hbs');
+    grunt.log.writeln('Got here');
+
+    // Precompile templates simultaneously
+    // Bluebird
+    // .all([bannerPrecompile, researchPrecompile, newsPrecompile])
+    // .spread(function (bannerTemplate, researchTemplate, newsTemplate) {
+    //   grunt.log.writeln('Templates compiled');
+    //   grunt.log.writeln(bannerTemplate);
+    //   grunt.log.writeln(researchTemplate);
+    //   grunt.log.writeln(newsTemplate);
+    // })
+    // .catch(function (err) {
+    //   // At least one request failed.
+    //   grunt.log.writeln('Error happened');
+    // }).finally(function() {
+    //   done();
+    // });
 
     // Run all requests simultaneously
     Bluebird.all([mastheadRequest, researchRequest, newsRequest])
     .spread(function (mastheadResponse, researchResponse, newsResponse) {
+      grunt.log.writeln('Do stuff');
       // All requests succeeded.
       var mJSON = JSON.parse(mastheadResponse);
       mJSON.items.forEach(function(item, i) {
@@ -77,7 +97,7 @@ module.exports = function(grunt) {
           buttonText: item.fields.buttonText
         };
         // var bannerHtml = bannerTemplate(bannerContext);
-        grunt.log.writeln(bannerTemplate);
+        grunt.log.writeln('Make banner with "'+item.fields.title+'"');
       });
       // grunt.log.writeln(Path.resolve(this.data.targetDir, 'banner/index.html'));
       var rJSON = JSON.parse(researchResponse);
