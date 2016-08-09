@@ -124,7 +124,7 @@ module.exports = function(grunt) {
     // Save remote image locally
     function saveAsset(thisAsset) {
       return new Bluebird(function(resolve, reject) {
-        if (thisAsset === false) resolve();
+        if (typeof thisAsset == 'undefined') resolve();
         var savePath = Path.resolve(options.uploadDir, 'images', thisAsset.fields.file.fileName);
         var saveTarget = thisAsset.fields.file.url;
         if (saveTarget.indexOf('//') === 0) saveTarget = 'https:'+saveTarget;
@@ -174,6 +174,7 @@ module.exports = function(grunt) {
         return bannerTemplate(bannerContext);
       }).catch(function (err) {
         grunt.log.error(err);
+        done(err);
       }).then(function(bannerHtml) {
         var bannerPath = Path.resolve(options.targetDir, 'banner/index.html');
         return writeFile(bannerPath, bannerHtml);
@@ -184,6 +185,7 @@ module.exports = function(grunt) {
         return Bluebird.resolve(true);
       }).catch(function (err) {
         grunt.log.error(err);
+        done(err);
       });
     }
 
@@ -203,10 +205,10 @@ module.exports = function(grunt) {
         var researchAssets = researchJSON.includes.Asset;
         function makeResearchItem(researchItem, i) {
           var researchHtml = '<!-- no story -->';
-          if (researchItem !== false) {
-            researchImages[i-1] = getAsset(researchItem.fields.image, researchAssets);
+          if (typeof researchItem != 'undefined') {
+            researchImages[i] = getAsset(researchItem.fields.image, researchAssets);
             var researchContext = {
-              image: researchImages[i-1].fields.file.uoyurl,
+              image: researchImages[i].fields.file.uoyurl,
               title: researchItem.fields.title,
               excerpt: Marked(researchItem.fields.excerpt),
               link: researchItem.fields.link
@@ -216,24 +218,19 @@ module.exports = function(grunt) {
           var researchPath = Path.resolve(options.targetDir, 'research/item'+i+'.html');
           return writeFile(researchPath, researchHtml);
         }
-        return Bluebird.all([
-          makeResearchItem(researchJSON.items[0] || false, 1),
-          makeResearchItem(researchJSON.items[1] || false, 2),
-          makeResearchItem(researchJSON.items[2] || false, 3),
-          makeResearchItem(researchJSON.items[3] || false, 4)
-        ]);
-      }).then(function() {
-        return Bluebird.all([
-          saveAsset(researchImages[0] || false),
-          saveAsset(researchImages[1] || false),
-          saveAsset(researchImages[2] || false),
-          saveAsset(researchImages[3] || false)
-        ]);
+        // Make HTML snippets and save images locally
+        var researchArray = [];
+        for (var i = 0; i < 4; i++) {
+          researchArray.push(makeResearchItem(researchJSON.items[i], i));
+          researchArray.push(saveAsset(researchImages[i]));
+        }
+        return Bluebird.all(researchArray);
       }).then(function() {
         grunt.log.ok('Research items completed');
         return Bluebird.resolve(true);
       }).catch(function (err) {
         grunt.log.error(err);
+        done(err);
       });
     }
 
@@ -252,13 +249,14 @@ module.exports = function(grunt) {
         var newsJSON = JSON.parse(newsResponse);
         var newsAssets = newsJSON.includes.Asset;
         var newsEntries = newsJSON.includes.Entry;
-        function makeNewsItem(newsItem, i) {
+        function makeNewsItem(i) {
+          var newsItem = newsJSON[i];
           var newsHtml = '<!-- no story -->';
-          if (newsItem !== false) {
-            newsImages[i-1] = getAsset(newsItem.fields.image, newsAssets);
+          if (typeof newsItem != 'undefined') {
+            newsImages[i] = getAsset(newsItem.fields.image, newsAssets);
             var thisCategory = getEntry(newsItem.fields.category, newsEntries)
             var newsContext = {
-              image: newsImages[i-1].fields.file.uoyurl,
+              image: newsImages[i].fields.file.uoyurl,
               title: newsItem.fields.title,
               excerpt: Marked(newsItem.fields.excerpt),
               link: newsItem.fields.link,
@@ -270,28 +268,19 @@ module.exports = function(grunt) {
           var newsPath = Path.resolve(options.targetDir, 'news/item'+i+'.html');
           return writeFile(newsPath, newsHtml);
         }
-        return Bluebird.all([
-          makeNewsItem(newsJSON.items[0] || false, 1),
-          makeNewsItem(newsJSON.items[1] || false, 2),
-          makeNewsItem(newsJSON.items[2] || false, 3),
-          makeNewsItem(newsJSON.items[3] || false, 4),
-          makeNewsItem(newsJSON.items[4] || false, 5),
-          makeNewsItem(newsJSON.items[5] || false, 6)
-        ]);
-      }).then(function() {
-        return Bluebird.all([
-          saveAsset(newsImages[0] || false),
-          saveAsset(newsImages[1] || false),
-          saveAsset(newsImages[2] || false),
-          saveAsset(newsImages[3] || false),
-          saveAsset(newsImages[4] || false),
-          saveAsset(newsImages[5] || false)
-        ]);
+        // Make HTML snippets and save images locally
+        var newsArray = [];
+        for (var i = 0; i < 6; i++) {
+          newsArray.push(makeNewsItem(i));
+          newsArray.push(saveAsset(newsImages[i]));
+        }
+        return Bluebird.all(newsArray);
       }).then(function() {
         grunt.log.ok('News items completed');
         return Bluebird.resolve(true);
       }).catch(function (err) {
         grunt.log.error(err);
+        done(err);
       });
     }
 
@@ -302,6 +291,7 @@ module.exports = function(grunt) {
       grunt.log.ok('Templates successfully created');
     }).catch(function(err) {
       grunt.log.error(err);
+      done(err);
     }).finally(function() {
       done();
     });
