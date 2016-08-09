@@ -1,6 +1,5 @@
 module.exports = function(grunt) {
 
-
 	var snippetsURL = 'http://www.york.ac.uk/homepage-snippets/';
 	var currentDate = new Date();
 	var dateStamp =  currentDate.getFullYear() + '_'
@@ -19,6 +18,7 @@ module.exports = function(grunt) {
 
 		curl: {
 			'template': {
+        // TODO: This will need updating when we have the correct page publishing
 				src: 'http://www.york.ac.uk/static/data/homepage/homepage.html',
 				dest: 'download/index_template.html'
 			}
@@ -48,19 +48,32 @@ module.exports = function(grunt) {
 					showProgress: true
 				}
 			},
-			live: {
-				files : {
-					'./': 'upload/index.html'
-				},
-				options: {
-					path: '.',
-					host: 'sftp.york.ac.uk',
-					username: '<%= credentials.key1.username %>',
-					password: '<%= credentials.key1.password %>',
-					srcBasePath: 'upload/',
-					showProgress: true
-				}
-			},
+      live: {
+        files : {
+          './': 'upload/index.html'
+        },
+        options: {
+          path: '.',
+          host: 'sftp.york.ac.uk',
+          username: '<%= credentials.key1.username %>',
+          password: '<%= credentials.key1.password %>',
+          srcBasePath: 'upload/',
+          showProgress: true
+        }
+      },
+      images: {
+        files : {
+          './': 'upload/images/**'
+        },
+        options: {
+          path: '/usr/yorkweb/web/static/data/homepage/images/',
+          host: 'sftp.york.ac.uk',
+          username: '<%= credentials.static.username %>',
+          password: '<%= credentials.static.password %>',
+          srcBasePath: 'upload/images/',
+          showProgress: true
+        }
+      },
 			screenshot: {
 				files : {
 					'./': 'upload/screenshots/**'
@@ -118,8 +131,9 @@ module.exports = function(grunt) {
 
     get: {
       api: {
-        layoutsDir: 'layouts',
-        targetDir: 'download'
+        layoutDir: 'layouts',
+        targetDir: 'download',
+        uploadDir: 'upload'
       }
     }
 
@@ -138,6 +152,7 @@ module.exports = function(grunt) {
   ]);
   grunt.registerTask('test',[
     'default',
+    'sftp:images',
     'sftp:test',
     'open:test'
   ]);

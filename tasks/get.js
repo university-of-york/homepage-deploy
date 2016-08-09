@@ -9,6 +9,8 @@ var Request = require('request-promise');
 var Bluebird = require('bluebird');
 var Handlebars = require('handlebars');
 
+var homepageImageDir = "https://www.york.ac.uk/static/data/homepage/images/"
+
 // format an ISO date using Moment.js
 // usage: {{dateFormat dateString format="MMMM YYYY"}}
 Handlebars.registerHelper('dateFormat', function(context, block) {
@@ -21,17 +23,26 @@ Handlebars.registerHelper('dateFormat', function(context, block) {
 Handlebars.registerHelper('iconify', function(context) {
   switch (context) {
     case 'News':
-      return 'news';
+      return 'newspaper-o';
     case 'Event':
-      return 'event';
+      return 'calendar';
     case 'Comment':
-      return 'comment';
+      return 'comment-o';
     default:
-      return 'bicycle';
+      return 'null';
   }
 });
 
 module.exports = function(grunt) {
+
+  // log
+  function log(something) {
+    grunt.log.writeln(something);
+  }
+  // stringify json and log
+  function jlog(someJSON) {
+    log(JSON.stringify(someJSON,null,2));
+  }
 
   grunt.registerMultiTask('get', 'Get data from (Contentful) API', function() {
 
@@ -63,10 +74,10 @@ module.exports = function(grunt) {
     }
 
     // Precompile Handlebars templates
-    var layoutsDir = this.data.layoutsDir;
+    var layoutDir = this.data.layoutDir || 'layouts';
     function compileTemplate(templateName) {
       return new Bluebird(function(resolve, reject) {
-        var templatePath = Path.resolve(layoutsDir, templateName);
+        var templatePath = Path.resolve(layoutDir, templateName);
         Fs.readFile(templatePath, 'utf-8', function(err, data) {
           if (err) {
             reject(templatePath+' could not be read');
@@ -94,10 +105,50 @@ module.exports = function(grunt) {
       return encodeURI(url);
     }
 
+    // gets image from assets array
+    function getAsset(imageField, assets) {
+      var imageMeta = imageField.sys;
+      var thisAsset = assets.filter(function(asset, j) {
+        return asset.sys.id === imageMeta.id;
+      })[0];
+      // Add York URL to asset object
+      thisAsset.fields.file.uoyurl = homepageImageDir+thisAsset.fields.file.fileName;
+      return thisAsset;
+    };
+
+    // Save remote image locally
+    var uploadDir = this.data.uploadDir || 'upload';
+    function saveAsset(thisAsset) {
+      return new Bluebird(function(resolve, reject) {
+        if (thisAsset === false) resolve();
+        var savePath = Path.resolve(uploadDir, 'images', thisAsset.fields.file.fileName);
+        var saveTarget = thisAsset.fields.file.url;
+        if (saveTarget.indexOf('//') === 0) saveTarget = 'https:'+saveTarget;
+        Request(saveTarget, {encoding: 'binary'}, function(err, response, body) {
+          if (err) {
+            reject(saveTarget+' could not be read');
+          }
+          grunt.file.write(savePath, body, {encoding: 'binary'});
+          grunt.verbose.ok('Image saved to '+savePath);
+          resolve();
+        });
+      });
+    }
+
+    // gets specific entry from entries array
+    function getEntry(entryField, entries) {
+      var entryMeta = entryField.sys;
+      var thisEntry = entries.filter(function(entry, j) {
+        return entry.sys.id === entryMeta.id;
+      })[0];
+      return thisEntry;
+    }
+
     // Get banner item (it's called mastheadItem in Contentful)
     var bannerCompile = compileTemplate('banner.hbs');
     var bannerUrl = makeUrl('mastheadItem');
     var bannerRequest = Request(bannerUrl);
+    var bannerImage;
 
     // Banner creation
     function createBanner() {
@@ -107,21 +158,23 @@ module.exports = function(grunt) {
         // All requests succeeded.
         var bannerJSON = JSON.parse(bannerResponse);
         var bannerItem = bannerJSON.items[0];
-        // TODO Need to do banner image asset
+        var bannerAssets = bannerJSON.includes.Asset;
+        bannerImage = getAsset(bannerItem.fields.bannerImage, bannerAssets);
         var bannerContext = {
-          bannerImage: 'https://unsplash.it/1200/800/?random',
+          bannerImage: bannerImage.fields.file.uoyurl,
           title: bannerItem.fields.title,
           excerpt: Marked(bannerItem.fields.excerpt),
           buttonLink: bannerItem.fields.buttonLink,
           buttonText: bannerItem.fields.buttonText
         };
-        var bannerHtml = bannerTemplate(bannerContext);
-        return bannerHtml;
+        return bannerTemplate(bannerContext);
       }).catch(function (err) {
         grunt.log.error(err);
       }).then(function(bannerHtml) {
         var bannerPath = Path.resolve(targetDir, 'banner/index.html');
         return writeFile(bannerPath, bannerHtml);
+      }).then(function() {
+        return saveAsset(bannerImage);
       }).then(function() {
         grunt.log.ok('Banner items completed');
         return Bluebird.resolve(true);
@@ -134,6 +187,7 @@ module.exports = function(grunt) {
     var researchCompile = compileTemplate('research.hbs');
     var researchUrl = makeUrl('researchStory');
     var researchRequest = Request(researchUrl);
+    var researchImages = [];
 
     // Research items creation
     function createResearch() {
@@ -146,13 +200,9 @@ module.exports = function(grunt) {
         function makeResearchItem(researchItem, i) {
           var researchHtml = '<!-- no story -->';
           if (researchItem !== false) {
-            var imageMeta = researchItem.fields.image.sys;
-            var thisAsset = researchAssets.filter(function(asset, j) {
-              return asset.sys.id === imageMeta.id;
-            });
-            // TODO Need to do research image asset
+            researchImages[i-1] = getAsset(researchItem.fields.image, researchAssets);
             var researchContext = {
-              image: thisAsset[0].fields.file.url,
+              image: researchImages[i-1].fields.file.uoyurl,
               title: researchItem.fields.title,
               excerpt: Marked(researchItem.fields.excerpt),
               link: researchItem.fields.link
@@ -169,6 +219,13 @@ module.exports = function(grunt) {
           makeResearchItem(researchJSON.items[3] || false, 4)
         ]);
       }).then(function() {
+        return Bluebird.all([
+          saveAsset(researchImages[0] || false),
+          saveAsset(researchImages[1] || false),
+          saveAsset(researchImages[2] || false),
+          saveAsset(researchImages[3] || false)
+        ]);
+      }).then(function() {
         grunt.log.ok('Research items completed');
         return Bluebird.resolve(true);
       }).catch(function (err) {
@@ -180,6 +237,7 @@ module.exports = function(grunt) {
     var newsCompile = compileTemplate('news.hbs');
     var newsUrl = makeUrl('newsStory');
     var newsRequest = Request(newsUrl);
+    var newsImages = [];
 
     // News items creation
     function createNews() {
@@ -189,22 +247,19 @@ module.exports = function(grunt) {
         // All requests succeeded.
         var newsJSON = JSON.parse(newsResponse);
         var newsAssets = newsJSON.includes.Asset;
+        var newsEntries = newsJSON.includes.Entry;
         function makeNewsItem(newsItem, i) {
           var newsHtml = '<!-- no story -->';
           if (newsItem !== false) {
-            var imageMeta = newsItem.fields.image.sys;
-            var thisAsset = newsAssets.filter(function(asset, j) {
-              return asset.sys.id === imageMeta.id;
-            });
-            grunt.log.writeln(thisAsset[0].fields.file.url);
-            // TODO Need to get category Entry
+            newsImages[i-1] = getAsset(newsItem.fields.image, newsAssets);
+            var thisCategory = getEntry(newsItem.fields.category, newsEntries)
             var newsContext = {
-              image: thisAsset[0].fields.file.url,
+              image: newsImages[i-1].fields.file.uoyurl,
               title: newsItem.fields.title,
               excerpt: Marked(newsItem.fields.excerpt),
               link: newsItem.fields.link,
               publishDate: newsItem.fields.publishDate,
-              category: 'News'
+              category: thisCategory.fields.name
             };
             newsHtml = newsTemplate(newsContext);
           }
@@ -218,6 +273,15 @@ module.exports = function(grunt) {
           makeNewsItem(newsJSON.items[3] || false, 4),
           makeNewsItem(newsJSON.items[4] || false, 5),
           makeNewsItem(newsJSON.items[5] || false, 6)
+        ]);
+      }).then(function() {
+        return Bluebird.all([
+          saveAsset(newsImages[0] || false),
+          saveAsset(newsImages[1] || false),
+          saveAsset(newsImages[2] || false),
+          saveAsset(newsImages[3] || false),
+          saveAsset(newsImages[4] || false),
+          saveAsset(newsImages[5] || false)
         ]);
       }).then(function() {
         grunt.log.ok('News items completed');
