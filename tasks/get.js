@@ -46,6 +46,11 @@ module.exports = function(grunt) {
 
   grunt.registerMultiTask('get', 'Get data from (Contentful) API', function() {
 
+    var options = this.options({
+      layoutDir: 'layouts',
+      targetDir: 'download',
+      uploadDir: 'upload'
+    });
     var done = this.async();
     // Contentful CDN URL:
     // https://cdn.contentful.com/spaces/spaceId/entries?access_token=accessToken&content_type=newsStory
@@ -54,15 +59,16 @@ module.exports = function(grunt) {
     var accessToken = credentials.contentful.accessToken;
     var apiUrl = 'https://cdn.contentful.com/spaces/'+spaceId+'/entries?access_token='+accessToken;
 
-    // Write 'html' to 'path' - create if it doesn't exist yet
-    var targetDir = this.data.targetDir || 'targets';
+    // Write 'html' to 'path'
     function writeFile(path, html) {
       return new Bluebird(function(resolve, reject) {
         var thisDir = Path.dirname(path);
+        // Create directory if it doesn't exist yet
         Mkdirp(thisDir, function (err) {
           if (err) {
             reject('Directory '+thisDir+' could not be created');
           }
+          // Write the file
           Fs.writeFile(path, html, function(err) {
             if (err) {
               reject('File '+path+' could not be created');
@@ -73,11 +79,10 @@ module.exports = function(grunt) {
       });
     }
 
-    // Precompile Handlebars templates
-    var layoutDir = this.data.layoutDir || 'layouts';
+    // Precompile a Handlebars template
     function compileTemplate(templateName) {
       return new Bluebird(function(resolve, reject) {
-        var templatePath = Path.resolve(layoutDir, templateName);
+        var templatePath = Path.resolve(options.layoutDir, templateName);
         Fs.readFile(templatePath, 'utf-8', function(err, data) {
           if (err) {
             reject(templatePath+' could not be read');
@@ -88,7 +93,7 @@ module.exports = function(grunt) {
       });
     }
 
-    // Pass in the content_type needed, i.e. 'bannerItem', 'researchStory' or 'newsStory'
+    // Pass in the content_type needed, i.e. 'mastheadItem', 'researchStory' or 'newsStory'
     function makeUrl(contentType) {
       var now = new Date().toISOString();
       var url = apiUrl;
@@ -117,11 +122,10 @@ module.exports = function(grunt) {
     };
 
     // Save remote image locally
-    var uploadDir = this.data.uploadDir || 'upload';
     function saveAsset(thisAsset) {
       return new Bluebird(function(resolve, reject) {
         if (thisAsset === false) resolve();
-        var savePath = Path.resolve(uploadDir, 'images', thisAsset.fields.file.fileName);
+        var savePath = Path.resolve(options.uploadDir, 'images', thisAsset.fields.file.fileName);
         var saveTarget = thisAsset.fields.file.url;
         if (saveTarget.indexOf('//') === 0) saveTarget = 'https:'+saveTarget;
         Request(saveTarget, {encoding: 'binary'}, function(err, response, body) {
@@ -171,7 +175,7 @@ module.exports = function(grunt) {
       }).catch(function (err) {
         grunt.log.error(err);
       }).then(function(bannerHtml) {
-        var bannerPath = Path.resolve(targetDir, 'banner/index.html');
+        var bannerPath = Path.resolve(options.targetDir, 'banner/index.html');
         return writeFile(bannerPath, bannerHtml);
       }).then(function() {
         return saveAsset(bannerImage);
@@ -209,7 +213,7 @@ module.exports = function(grunt) {
             };
             researchHtml = researchTemplate(researchContext);
           }
-          var researchPath = Path.resolve(targetDir, 'research/item'+i+'.html');
+          var researchPath = Path.resolve(options.targetDir, 'research/item'+i+'.html');
           return writeFile(researchPath, researchHtml);
         }
         return Bluebird.all([
@@ -263,7 +267,7 @@ module.exports = function(grunt) {
             };
             newsHtml = newsTemplate(newsContext);
           }
-          var newsPath = Path.resolve(targetDir, 'news/item'+i+'.html');
+          var newsPath = Path.resolve(options.targetDir, 'news/item'+i+'.html');
           return writeFile(newsPath, newsHtml);
         }
         return Bluebird.all([
