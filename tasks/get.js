@@ -250,7 +250,7 @@ module.exports = function(grunt) {
         var newsAssets = newsJSON.includes.Asset;
         var newsEntries = newsJSON.includes.Entry;
         function makeNewsItem(i) {
-          var newsItem = newsJSON[i];
+          var newsItem = newsJSON.items[i];
           var newsHtml = '<!-- no story -->';
           if (typeof newsItem != 'undefined') {
             newsImages[i] = getAsset(newsItem.fields.image, newsAssets);
