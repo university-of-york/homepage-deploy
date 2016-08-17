@@ -40,11 +40,11 @@ module.exports = function(grunt) {
 					'./': 'upload/index.html'
 				},
 				options: {
-					path: '/usr/yorkwebtest/wwwtest.york.ac.uk/np/',
-					host: 'sftp.york.ac.uk',
-					username: '<%= credentials.key1.username %>',
-					password: '<%= credentials.key1.password %>',
-					srcBasePath: 'upload/',
+          path: '/usr/yorkweb/web/static/data/homepage/',
+          host: 'sftp.york.ac.uk',
+          username: '<%= credentials.static.username %>',
+          password: '<%= credentials.static.password %>',
+          srcBasePath: 'upload/',
 					showProgress: true
 				}
 			},
@@ -53,10 +53,10 @@ module.exports = function(grunt) {
           './': 'upload/index.html'
         },
         options: {
-          path: '.',
+          path: '/usr/yorkweb/web/static/data/homepage/',
           host: 'sftp.york.ac.uk',
-          username: '<%= credentials.key1.username %>',
-          password: '<%= credentials.key1.password %>',
+          username: '<%= credentials.static.username %>',
+          password: '<%= credentials.static.password %>',
           srcBasePath: 'upload/',
           showProgress: true
         }
@@ -109,10 +109,10 @@ module.exports = function(grunt) {
 
 		open: {
 			test: {
-				path: 'http://wwwtest.york.ac.uk'
+				path:'http://www.york.ac.uk/static/data/homepage/'
 			},
 			live: {
-				path:'http://www.york.ac.uk'
+				path:'http://www.york.ac.uk/static/data/homepage/'
 			}
 
 		},
