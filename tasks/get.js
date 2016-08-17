@@ -93,23 +93,6 @@ module.exports = function(grunt) {
       });
     }
 
-    // Pass in the content_type needed, i.e. 'mastheadItem', 'researchStory' or 'newsStory'
-    function makeUrl(contentType) {
-      var now = new Date().toISOString();
-      var url = apiUrl;
-      // Add content type
-      url+= '&content_type='+contentType;
-      // start date is before now
-      url+= '&fields.startDate[lt]='+now;
-      // and expiry date is after now
-      url+= '&fields.expiryDate[gt]='+now;
-      // and live is true
-      url+= '&fields.live=true';
-      // order by time added
-      url+= '&order=sys.updatedAt';
-      return encodeURI(url);
-    }
-
     // gets image from assets array
     function getAsset(imageField, assets) {
       var imageMeta = imageField.sys;
@@ -119,7 +102,7 @@ module.exports = function(grunt) {
       // Add York URL to asset object
       thisAsset.fields.file.uoyurl = homepageImageDir+thisAsset.fields.file.fileName;
       return thisAsset;
-    };
+    }
 
     // Save remote image locally
     function saveAsset(thisAsset) {
@@ -141,6 +124,7 @@ module.exports = function(grunt) {
 
     // gets specific entry from entries array
     function getEntry(entryField, entries) {
+      if (!entryField) return false;
       var entryMeta = entryField.sys;
       var thisEntry = entries.filter(function(entry, j) {
         return entry.sys.id === entryMeta.id;
@@ -148,28 +132,47 @@ module.exports = function(grunt) {
       return thisEntry;
     }
 
+    var layoutUrl = apiUrl;
+    layoutUrl+= '&content_type=homepageLayout';
+    layoutUrl+= '&fields.current=true';
+    var layoutRequest = Request(layoutUrl);
+
+    grunt.log.ok("API URL is: "+layoutUrl);
+
+    // Fetch the current homepage layout
+    function fetchLayout() {
+      return layoutRequest
+      .then(function(layoutResponse) {
+        var layout = JSON.parse(layoutResponse);
+        grunt.log.ok('Current layout fetched');
+        if (layout.total > 1) {
+          Bluebird.reject('Too many current layouts');
+        }
+        return Bluebird.resolve(layout);
+      }).catch(function (err) {
+        grunt.log.error(err);
+        done(err);
+      });
+    }
+
     // Get banner item (it's called mastheadItem in Contentful)
     var bannerCompile = compileTemplate('banner.hbs');
-    var bannerUrl = makeUrl('mastheadItem');
-    var bannerRequest = Request(bannerUrl);
     var bannerImage;
 
     // Banner creation
-    function createBanner() {
-      return Bluebird
-      .all([bannerCompile, bannerRequest])
-      .spread(function (bannerTemplate, bannerResponse) {
-        // All requests succeeded.
-        var bannerJSON = JSON.parse(bannerResponse);
-        var bannerItem = bannerJSON.items[0];
-        var bannerAssets = bannerJSON.includes.Asset;
-        bannerImage = getAsset(bannerItem.fields.bannerImage, bannerAssets);
+    function createBanner(layout) {
+      return bannerCompile.then(function (bannerTemplate) {
+        // Banner template built
+        var bannerItem = layout.items[0].fields.mainBanner;
+        var bannerEntry = getEntry(bannerItem, layout.includes.Entry);
+        var bannerAssets = layout.includes.Asset;
+        bannerImage = getAsset(bannerEntry.fields.bannerImage, bannerAssets);
         var bannerContext = {
           bannerImage: bannerImage.fields.file.uoyurl,
-          title: bannerItem.fields.title,
-          excerpt: Marked(bannerItem.fields.excerpt),
-          buttonLink: bannerItem.fields.buttonLink,
-          buttonText: bannerItem.fields.buttonText
+          title: bannerEntry.fields.title,
+          excerpt: Marked(bannerEntry.fields.excerpt),
+          buttonLink: bannerEntry.fields.buttonLink,
+          buttonText: bannerEntry.fields.buttonText
         };
         return bannerTemplate(bannerContext);
       }).catch(function (err) {
@@ -191,27 +194,25 @@ module.exports = function(grunt) {
 
     // Get research stories
     var researchCompile = compileTemplate('research.hbs');
-    var researchUrl = makeUrl('researchStory');
-    var researchRequest = Request(researchUrl);
     var researchImages = [];
 
     // Research items creation
-    function createResearch() {
-      return Bluebird
-      .all([researchCompile, researchRequest])
-      .spread(function (researchTemplate, researchResponse) {
-        // All requests succeeded.
-        var researchJSON = JSON.parse(researchResponse);
-        var researchAssets = researchJSON.includes.Asset;
-        function makeResearchItem(researchItem, i) {
+    function createResearch(layout) {
+      return researchCompile.then(function(researchTemplate) {
+        // Research template built
+        var researchItems = layout.items[0].fields.researchItems;
+        var researchAssets = layout.includes.Asset;
+        function makeResearchItem(i) {
+          var researchEntry = getEntry(researchItems[i], layout.includes.Entry);
           var researchHtml = '<!-- no story -->';
-          if (typeof researchItem != 'undefined') {
-            researchImages[i] = getAsset(researchItem.fields.image, researchAssets);
+          if (typeof researchEntry != 'undefined') {
+            researchImages[i] = getAsset(researchEntry.fields.image, researchAssets);
+            log(researchEntry.fields.title);
             var researchContext = {
               image: researchImages[i].fields.file.uoyurl,
-              title: researchItem.fields.title,
-              excerpt: Marked(researchItem.fields.excerpt),
-              link: researchItem.fields.link
+              title: researchEntry.fields.title,
+              excerpt: Marked(researchEntry.fields.excerpt),
+              link: researchEntry.fields.link
             };
             researchHtml = researchTemplate(researchContext);
           }
@@ -221,7 +222,7 @@ module.exports = function(grunt) {
         // Make HTML snippets and save images locally
         var researchArray = [];
         for (var i = 0; i < 4; i++) {
-          researchArray.push(makeResearchItem(researchJSON.items[i], i));
+          researchArray.push(makeResearchItem(i));
           researchArray.push(saveAsset(researchImages[i]));
         }
         return Bluebird.all(researchArray);
@@ -236,32 +237,33 @@ module.exports = function(grunt) {
 
     // Get news stories
     var newsCompile = compileTemplate('news.hbs');
-    var newsUrl = makeUrl('newsStory');
-    var newsRequest = Request(newsUrl);
     var newsImages = [];
+    var categoryUrl = apiUrl;
+    categoryUrl+= '&content_type=category';
+    var categoryRequest = Request(categoryUrl);
 
     // News items creation
-    function createNews() {
-      return Bluebird
-      .all([newsCompile, newsRequest])
-      .spread(function (newsTemplate, newsResponse) {
-        // All requests succeeded.
-        var newsJSON = JSON.parse(newsResponse);
-        var newsAssets = newsJSON.includes.Asset;
-        var newsEntries = newsJSON.includes.Entry;
+    function createNews(layout) {
+      return Bluebird.all([newsCompile, categoryRequest])
+      .spread(function(newsTemplate, categoryResponse) {
+        // News template built and categories found
+        var categories = JSON.parse(categoryResponse).items;
+        var newsItems = layout.items[0].fields.newsStories;
+        var newsAssets = layout.includes.Asset;
         function makeNewsItem(i) {
-          var newsItem = newsJSON.items[i];
+          var newsEntry = getEntry(newsItems[i], layout.includes.Entry);
           var newsHtml = '<!-- no story -->';
-          if (typeof newsItem != 'undefined') {
-            newsImages[i] = getAsset(newsItem.fields.image, newsAssets);
-            var thisCategory = getEntry(newsItem.fields.category, newsEntries)
+          if (typeof newsEntry != 'undefined') {
+            newsImages[i] = getAsset(newsEntry.fields.image, newsAssets);
+            var thisCategoryEntry = getEntry(newsEntry.fields.category, categories);
+            var thisCategoryName = thisCategoryEntry ? thisCategoryEntry.fields.name : false ;
             var newsContext = {
               image: newsImages[i].fields.file.uoyurl,
-              title: newsItem.fields.title,
-              excerpt: Marked(newsItem.fields.excerpt),
-              link: newsItem.fields.link,
-              publishDate: newsItem.fields.publishDate,
-              category: thisCategory.fields.name
+              title: newsEntry.fields.title,
+              excerpt: Marked(newsEntry.fields.excerpt),
+              link: newsEntry.fields.link,
+              publishDate: newsEntry.fields.publishDate,
+              category: thisCategoryName
             };
             newsHtml = newsTemplate(newsContext);
           }
@@ -284,11 +286,11 @@ module.exports = function(grunt) {
       });
     }
 
-    // Run three processes simultaneously
-    Bluebird
-    .all([createBanner(), createResearch(), createNews()])
-    .spread(function(a, b, c) {
-      grunt.log.ok('Templates successfully created');
+    // get layout then run build processes simultaneously
+    fetchLayout().then(function(layout) {
+      return Bluebird.all([createBanner(layout), createResearch(layout), createNews(layout)]);
+    }).spread(function(a, b, c) {
+       grunt.log.ok('Templates successfully created');
     }).catch(function(err) {
       grunt.log.error(err);
       done(err);
