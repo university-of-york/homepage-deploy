@@ -13,14 +13,22 @@ To install Grunt, type:
 From your local clone of the repository, run:
 `npm install`.
 * __Populate login details__  
-In the root of the repository, create a file called .ftppass, paste in the code below and replace the username and password values.
+In the root of the repository, create a file called .ftppass, paste in the code below and replace the username and password values. If you do not know them, please ask someone from the Digital team.
 
-		{  
-			"key1": {  
-  				"username": "USERNAME",  
-  				"password": "PASSWORD"  
-  			}  
-  		}
+    {  
+      "key1": {  
+        "username": "USERNAME",  
+        "password": "PASSWORD"  
+      },
+      "static": {  
+        "username": "USRNAME",  
+        "password": "PASSWORD"  
+      },  
+      "contentful": {  
+        "spaceId":"SPACEID",  
+        "accessToken":"ACCESSTOKEN"  
+      }  
+    }
 
 ##Day-to-day usage
 ### Step 1: Make your changes in the CMS and wait for them to publish

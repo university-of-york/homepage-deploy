@@ -59,6 +59,12 @@ module.exports = function(grunt) {
     var accessToken = credentials.contentful.accessToken;
     var apiUrl = 'https://cdn.contentful.com/spaces/'+spaceId+'/entries?access_token='+accessToken;
 
+    // fail the task
+    function fail(err) {
+      grunt.log.error(err);
+      done(new Error(err));
+    }
+
     // Write 'html' to 'path'
     function writeFile(path, html) {
       return new Bluebird(function(resolve, reject) {
@@ -137,8 +143,6 @@ module.exports = function(grunt) {
     layoutUrl+= '&fields.current=true';
     var layoutRequest = Request(layoutUrl);
 
-    grunt.log.ok("API URL is: "+layoutUrl);
-
     // Fetch the current homepage layout
     function fetchLayout() {
       return layoutRequest
@@ -146,12 +150,11 @@ module.exports = function(grunt) {
         var layout = JSON.parse(layoutResponse);
         grunt.log.ok('Current layout fetched');
         if (layout.total > 1) {
-          Bluebird.reject('Too many current layouts');
+          return Bluebird.reject('Too many current layouts');
         }
         return Bluebird.resolve(layout);
       }).catch(function (err) {
-        grunt.log.error(err);
-        done(err);
+        fail(err);
       });
     }
 
@@ -176,8 +179,7 @@ module.exports = function(grunt) {
         };
         return bannerTemplate(bannerContext);
       }).catch(function (err) {
-        grunt.log.error(err);
-        done(err);
+        fail(err);
       }).then(function(bannerHtml) {
         var bannerPath = Path.resolve(options.targetDir, 'banner/index.html');
         return writeFile(bannerPath, bannerHtml);
@@ -187,8 +189,7 @@ module.exports = function(grunt) {
         grunt.log.ok('Banner items completed');
         return Bluebird.resolve(true);
       }).catch(function (err) {
-        grunt.log.error(err);
-        done(err);
+        fail(err);
       });
     }
 
@@ -207,7 +208,6 @@ module.exports = function(grunt) {
           var researchHtml = '<!-- no story -->';
           if (typeof researchEntry != 'undefined') {
             researchImages[i] = getAsset(researchEntry.fields.image, researchAssets);
-            log(researchEntry.fields.title);
             var researchContext = {
               image: researchImages[i].fields.file.uoyurl,
               title: researchEntry.fields.title,
@@ -230,8 +230,7 @@ module.exports = function(grunt) {
         grunt.log.ok('Research items completed');
         return Bluebird.resolve(true);
       }).catch(function (err) {
-        grunt.log.error(err);
-        done(err);
+        fail(err);
       });
     }
 
@@ -281,8 +280,7 @@ module.exports = function(grunt) {
         grunt.log.ok('News items completed');
         return Bluebird.resolve(true);
       }).catch(function (err) {
-        grunt.log.error(err);
-        done(err);
+        fail(err);
       });
     }
 
@@ -290,11 +288,10 @@ module.exports = function(grunt) {
     fetchLayout().then(function(layout) {
       return Bluebird.all([createBanner(layout), createResearch(layout), createNews(layout)]);
     }).spread(function(a, b, c) {
-       grunt.log.ok('Templates successfully created');
+      grunt.log.ok('Templates successfully created');
     }).catch(function(err) {
-      grunt.log.error(err);
-      done(err);
-    }).finally(function() {
+      fail(err);
+    }).then(function() {
       done();
     });
 
