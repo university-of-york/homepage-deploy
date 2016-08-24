@@ -27,7 +27,7 @@ module.exports = function(grunt) {
 		bake: {
 			build: {
 				files: {
-					"upload/index.html": "download/index_template.html"
+					"upload/index.shtml": "download/index_template.html"
 				}
 			}
 		},
@@ -37,7 +37,7 @@ module.exports = function(grunt) {
 		sftp: {
 			test: {
 				files : {
-					'./': 'upload/index.html'
+					'./': 'upload/index.shtml'
 				},
 				options: {
           path: '/usr/yorkweb/web/static/data/homepage/',

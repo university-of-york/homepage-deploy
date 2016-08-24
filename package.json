@@ -19,5 +19,8 @@
     "request": "^2.74.0",
     "request-promise": "^4.1.0",
     "time-grunt": "^0.3.2"
+  },
+  "dependencies": {
+    "bluebird": "^3.4.1"
   }
 }
