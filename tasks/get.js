@@ -14,7 +14,7 @@ var homepageImageDir = "https://www.york.ac.uk/static/data/homepage/images/"
 // format an ISO date using Moment.js
 // usage: {{dateFormat dateString format="MMMM YYYY"}}
 Handlebars.registerHelper('dateFormat', function(context, block) {
-  var f = block.hash.format || "D MMM YYYY";
+  var f = block.hash.format || "D MMMM YYYY";
   return Moment(context).format(f);
 });
 
