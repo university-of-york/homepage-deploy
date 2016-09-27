@@ -1,5 +1,5 @@
-<figure class="c-figure c-figure--banner">
-  <img class="c-figure__image" src="{{bannerImage}}" alt="{{title}}">
+<figure class="c-figure c-figure--banner">{{#if bannerImage}}
+  <img class="c-figure__image" src="{{bannerImage}}" alt="{{bannerAlt}}">{{/if}}
   <div class="c-figure__content c-figure__content--left c-figure__content--third">
     <h3>{{title}}</h3>
     {{{excerpt}}}

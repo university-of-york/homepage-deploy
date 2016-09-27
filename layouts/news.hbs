@@ -1,7 +1,7 @@
-<a class="c-news c-news--excerpt" href="{{link}}">
+<a class="c-news c-news--excerpt" href="{{link}}">{{#if image}}
   <figure class="c-news__poster">
-    <img src="{{image}}" alt="{{title}}">
-  </figure>{{#if category}}
+    <img src="{{image}}" alt="{{imageAlt}}">
+  </figure>{{/if}}{{#if category}}
   <div class="c-label"><i class="c-icon c-icon--before c-icon--{{iconify category}}"></i>{{category}}</div>{{/if}}
   <h4 class="c-news__title">{{title}}</h4>{{#if publishDate}}
   <p class="c-news__meta"><time datetime="{{publishDate}}" class="c-news__date">{{dateFormat publishDate}}</time></p>{{/if}}

@@ -101,6 +101,7 @@ module.exports = function(grunt) {
 
     // gets image from assets array
     function getAsset(imageField, assets) {
+      if(typeof imageField == 'undefined') return false;
       var imageMeta = imageField.sys;
       var thisAsset = assets.filter(function(asset, j) {
         return asset.sys.id === imageMeta.id;
@@ -114,6 +115,7 @@ module.exports = function(grunt) {
     function saveAsset(thisAsset) {
       return new Bluebird(function(resolve, reject) {
         if (typeof thisAsset == 'undefined') resolve();
+        if (thisAsset === false) resolve();
         var savePath = Path.resolve(options.uploadDir, 'images', thisAsset.fields.file.fileName);
         var saveTarget = thisAsset.fields.file.url;
         if (saveTarget.indexOf('//') === 0) saveTarget = 'https:'+saveTarget;
@@ -170,8 +172,11 @@ module.exports = function(grunt) {
         var bannerEntry = getEntry(bannerItem, layout.includes.Entry);
         var bannerAssets = layout.includes.Asset;
         bannerImage = getAsset(bannerEntry.fields.bannerImage, bannerAssets);
+        var thisImage = bannerImage === false ? false : bannerImage.fields.file.uoyurl ;
+        var thisImageAlt = bannerImage === false ? false : bannerImage.fields.description ;
         var bannerContext = {
-          bannerImage: bannerImage.fields.file.uoyurl,
+          bannerImage: thisImage,
+          bannerImageAlt: thisImageAlt,
           title: bannerEntry.fields.title,
           excerpt: Marked(bannerEntry.fields.excerpt),
           buttonLink: bannerEntry.fields.buttonLink,
@@ -208,8 +213,11 @@ module.exports = function(grunt) {
           var researchHtml = '<!-- no story -->';
           if (typeof researchEntry != 'undefined') {
             researchImages[i] = getAsset(researchEntry.fields.image, researchAssets);
+            var thisImage = researchImages[i] === false ? false : researchImages[i].fields.file.uoyurl ;
+            var thisImageAlt = researchImages[i] === false ? false : researchImages[i].fields.description ;
             var researchContext = {
-              image: researchImages[i].fields.file.uoyurl,
+              image: thisImage,
+              imageAlt: thisImageAlt,
               title: researchEntry.fields.title,
               excerpt: Marked(researchEntry.fields.excerpt),
               link: researchEntry.fields.link
@@ -254,10 +262,13 @@ module.exports = function(grunt) {
           var newsHtml = '<!-- no story -->';
           if (typeof newsEntry != 'undefined') {
             newsImages[i] = getAsset(newsEntry.fields.image, newsAssets);
+            var thisImage = newsImages[i] === false ? false : newsImages[i].fields.file.uoyurl ;
+            var thisImageAlt = newsImages[i] === false ? false : newsImages[i].fields.description ;
             var thisCategoryEntry = getEntry(newsEntry.fields.category, categories);
             var thisCategoryName = thisCategoryEntry ? thisCategoryEntry.fields.name : false ;
             var newsContext = {
-              image: newsImages[i].fields.file.uoyurl,
+              image: thisImage,
+              imageAlt: thisImageAlt,
               title: newsEntry.fields.title,
               excerpt: Marked(newsEntry.fields.excerpt),
               link: newsEntry.fields.link,
