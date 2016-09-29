@@ -179,7 +179,7 @@ module.exports = function(grunt) {
           bannerImageAlt: thisImageAlt,
           title: bannerEntry.fields.title,
           excerpt: Marked(bannerEntry.fields.excerpt),
-          buttonLink: bannerEntry.fields.buttonLink,
+          bannerLink: bannerEntry.fields.buttonLink,
           buttonText: bannerEntry.fields.buttonText
         };
         return bannerTemplate(bannerContext);
