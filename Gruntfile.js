@@ -18,7 +18,6 @@ module.exports = function(grunt) {
 
 		curl: {
 			'template': {
-        // TODO: This will need updating when we have the correct page publishing
 				src: 'http://www.york.ac.uk/static/data/homepage/homepage.html',
 				dest: 'download/index_template.html'
 			}
@@ -50,13 +49,13 @@ module.exports = function(grunt) {
 			},
       live: {
         files : {
-          './': 'upload/index.html'
+          './': 'upload/index.shtml'
         },
         options: {
-          path: '/usr/yorkweb/web/static/data/homepage/',
+          path: '/usr/yorkweb/web/preview/',
           host: 'sftp.york.ac.uk',
-          username: '<%= credentials.static.username %>',
-          password: '<%= credentials.static.password %>',
+          username: '<%= credentials.key1.username %>',
+          password: '<%= credentials.key1.password %>',
           srcBasePath: 'upload/',
           showProgress: true
         }
@@ -112,7 +111,7 @@ module.exports = function(grunt) {
 				path:'http://www.york.ac.uk/static/data/homepage/'
 			},
 			live: {
-				path:'http://www.york.ac.uk/static/data/homepage/'
+				path:'http://www.york.ac.uk/preview/'
 			}
 
 		},
@@ -121,7 +120,7 @@ module.exports = function(grunt) {
     	sftp: {
       	options: {
         	// Static text.
-        	question: 'This will deploy your local copy of index.html to the live site.\nHave you tested it? If in doubt, run "grunt test" again. (y/n)',
+        	question: 'This will deploy your local copy of index.html to the preview site.\nHave you tested it? If in doubt, run "grunt test" again. (y/n)',
         	continue: function(answer) {
           	return answer.toLowerCase() === 'y';
         	}
@@ -159,8 +158,8 @@ module.exports = function(grunt) {
 	grunt.registerTask('live',[
 		'confirm',
 		'sftp:live',
-		'autoshot',
-		'sftp:screenshot',
+		// 'autoshot',
+		// 'sftp:screenshot',
 		'open:live'
 	]);
 };
