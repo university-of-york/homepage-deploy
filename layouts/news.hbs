@@ -4,7 +4,7 @@
   </figure>{{/if}}{{#if category}}
   <div class="c-label"><i class="c-icon c-icon--before c-icon--{{iconify category}}"></i>{{category}}</div>{{/if}}
   <h4 class="c-news__title">{{title}}</h4>{{#if publishDate}}
-  <p class="c-news__meta"><time datetime="{{publishDate}}" class="c-news__date">{{dateFormat publishDate}}</time></p>{{/if}}
+  <p class="c-news__event-date"><time datetime="{{publishDate}}" class="c-news__date">{{dateFormat publishDate}}</time></p>{{/if}}
   <div class="c-news__teaser">
     {{{excerpt}}}
   </div>
