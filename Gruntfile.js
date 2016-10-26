@@ -2,12 +2,12 @@ module.exports = function(grunt) {
 
 	var snippetsURL = 'http://www.york.ac.uk/homepage-snippets/';
 	var currentDate = new Date();
-	var dateStamp =  currentDate.getFullYear() + '_'
-                + ('0' + (currentDate.getMonth()+1)).slice(-2) + '_'
-                + ('0' + currentDate.getDate()).slice(-2) + '_'
-                + currentDate.getHours() +
-                + currentDate.getMinutes() +
-                + currentDate.getSeconds();
+	var dateStamp =  currentDate.getFullYear() + '_' +
+                  ('0' + (currentDate.getMonth()+1)).slice(-2) + '_' +
+                  ('0' + currentDate.getDate()).slice(-2) + '_' +
+                  currentDate.getHours() +
+                  currentDate.getMinutes() +
+                  currentDate.getSeconds();
 
 	// Project configuration.
 	grunt.initConfig({
@@ -46,16 +46,29 @@ module.exports = function(grunt) {
           srcBasePath: 'upload/',
 					showProgress: true
 				}
-			},
-      live: {
+      },
+      preview: {
         files : {
           './': 'upload/index.shtml'
         },
         options: {
           path: '/usr/yorkweb/web/preview/',
           host: 'sftp.york.ac.uk',
-          username: '<%= credentials.key1.username %>',
-          password: '<%= credentials.key1.password %>',
+          username: '<%= credentials.preview.username %>',
+          password: '<%= credentials.preview.password %>',
+          srcBasePath: 'upload/',
+          showProgress: true
+        }
+      },
+      live: {
+        files : {
+          './': 'upload/index.shtml'
+        },
+        options: {
+          path: '.',
+          host: 'sftp.york.ac.uk',
+          username: '<%= credentials.live.username %>',
+          password: '<%= credentials.live.password %>',
           srcBasePath: 'upload/',
           showProgress: true
         }
@@ -157,7 +170,8 @@ module.exports = function(grunt) {
   ]);
 	grunt.registerTask('live',[
 		'confirm',
-		'sftp:live',
+    'sftp:preview',
+    // 'sftp:live',
 		// 'autoshot',
 		// 'sftp:screenshot',
 		'open:live'
