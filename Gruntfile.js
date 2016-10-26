@@ -108,7 +108,7 @@ module.exports = function(grunt) {
 					remote: {
 						files: [
 							{
-								src:'http://www.york.ac.uk',
+								src:'https://www.york.ac.uk',
 								dest: 'homepage_' + dateStamp +'.png',
 								delay:1000
 							}
@@ -133,7 +133,7 @@ module.exports = function(grunt) {
     	sftp: {
       	options: {
         	// Static text.
-        	question: 'This will deploy your local copy of index.html to the preview site.\nHave you tested it? If in doubt, run "grunt test" again. (y/n)',
+        	question: 'This will deploy your local copy of index.html to the live site.\nHave you tested it? If in doubt, run "grunt test" again. (y/n)',
         	continue: function(answer) {
           	return answer.toLowerCase() === 'y';
         	}
@@ -170,10 +170,10 @@ module.exports = function(grunt) {
   ]);
 	grunt.registerTask('live',[
 		'confirm',
-    'sftp:preview',
-    // 'sftp:live',
-		// 'autoshot',
-		// 'sftp:screenshot',
+    // 'sftp:preview',
+    'sftp:live',
+		'autoshot',
+		'sftp:screenshot',
 		'open:live'
 	]);
 };
