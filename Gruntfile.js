@@ -93,8 +93,8 @@ module.exports = function(grunt) {
 				options: {
 					path: 'screenshots',
 					host: 'sftp.york.ac.uk',
-					username: '<%= credentials.key1.username %>',
-					password: '<%= credentials.key1.password %>',
+					username: '<%= credentials.live.username %>',
+					password: '<%= credentials.live.password %>',
 					srcBasePath: 'upload/screenshots',
 					showProgress: true
 				}
@@ -109,7 +109,7 @@ module.exports = function(grunt) {
 						files: [
 							{
 								src:'https://www.york.ac.uk',
-								dest: 'homepage_' + dateStamp +'.png',
+								dest:'homepage_' + dateStamp +'.png',
 								delay:1000
 							}
 						]
@@ -124,7 +124,7 @@ module.exports = function(grunt) {
 				path:'http://www.york.ac.uk/static/data/homepage/'
 			},
 			live: {
-				path:'http://www.york.ac.uk/preview/'
+				path:'http://www.york.ac.uk/'
 			}
 
 		},
