@@ -15,36 +15,35 @@ From your local clone of the repository, run:
 * __Populate login details__  
 In the root of the repository, create a file called .ftppass, paste in the code below and replace the username and password values. If you do not know them, please ask someone from the Digital team.
 
-    {  
-      "key1": {  
+~~~~
+{
+	"preview": {        
         "username": "USERNAME",  
         "password": "PASSWORD"  
-      },
-      "static": {  
+    },
+    "live": {  
+    	"username": "USERNAME",  
+        "password": "PASSWORD"  
+    },
+    "static": {  
         "username": "USRNAME",  
         "password": "PASSWORD"  
-      },  
-      "contentful": {  
+    },  
+    "contentful": {  
         "spaceId":"SPACEID",  
         "accessToken":"ACCESSTOKEN"  
-      }  
-    }
+    }  
+}
+~~~~
 
 ##Day-to-day usage
-### Step 1: Make your changes in the CMS and wait for them to publish
-Content needs to have published from the CMS before it can be included in the homepage.
-###Step 2: Deploy to wwwtest
+### Step 1: Make your changes in Contentful
+See the [documentation in the SMDC wiki](https://wiki.york.ac.uk/display/SMDC/Homepage+publishing+with+Contentful) for further details.
+###Step 2: Preview your changes
 
 From your local copy of the repository, run `grunt test`.
 
-When prompted, enter the path to the published snippets, eg `2015/02/16`.
-
-This will take a copy of the HTML published from the CMS, incorporate it into index.shtml in the 'upload' folder, and FTP the result to [http://wwwtest.york.ac.uk](http://wwwtest.york.ac.uk).
-
-#### Making minor amends
-If you need to make a minor amend (eg correcting a typo) at this stage, you can edit your local copy rather than editing the published snippets or waiting for a republish.
-
-Make your changes to upload/index.shtml, then run `grunt sftp:test`.
+This will get the current content from Contentful, incorporate it into index.shtml in the 'upload' folder, and SFTP the result to [http://www.york.ac.uk/static/data/homepage/](http://www.york.ac.uk/static/data/homepage/).
 
 
 ###Step 3: Deploy to live
