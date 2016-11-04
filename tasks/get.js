@@ -151,9 +151,11 @@ module.exports = function(grunt) {
       .then(function(layoutResponse) {
         var layout = JSON.parse(layoutResponse);
         grunt.log.ok('Current layout fetched');
-        grunt.log.ok('There are '+layout.total+' layouts in total');
+        if (layout.total === 0) {
+          return Bluebird.reject('There are no current layouts');
+        }
         if (layout.total > 1) {
-          return Bluebird.reject('Too many current layouts');
+          return Bluebird.reject('There are too many current layouts');
         }
         return Bluebird.resolve(layout);
       }).catch(function (err) {
