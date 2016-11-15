@@ -5,9 +5,9 @@ module.exports = function(grunt) {
 	var dateStamp =  currentDate.getFullYear() + '_' +
                   ('0' + (currentDate.getMonth()+1)).slice(-2) + '_' +
                   ('0' + currentDate.getDate()).slice(-2) + '_' +
-                  currentDate.getHours() +
-                  currentDate.getMinutes() +
-                  currentDate.getSeconds();
+                  ('0' + currentDate.getHours()).slice(-2) +
+                  ('0' + currentDate.getMinutes()).slice(-2) +
+                  ('0' + currentDate.getSeconds()).slice(-2);
 
 	// Project configuration.
 	grunt.initConfig({
@@ -101,30 +101,24 @@ module.exports = function(grunt) {
 			}
 		},
 
-		autoshot: {
+		screenshot: {
 			live: {
 				options: {
-					path: 'upload/screenshots',
-					remote: {
-						files: [
-							{
-								src:'https://www.york.ac.uk',
-								dest:'homepage_' + dateStamp +'.png',
-								delay:1000
-							}
-						]
-					},
-					viewport: ['1024x1300']
+          src: 'https://www-users.york.ac.uk/~cm1438/homepage/',
+					//src:'https://www.york.ac.uk',
+					dest:'upload/screenshots/homepage_' + dateStamp +'.jpg',
+					delay:1000,
+          viewport: '1240x1080'
 				}
 			}
 		},
 
 		open: {
 			test: {
-				path:'http://www.york.ac.uk/static/data/homepage/'
+				path:'https://www.york.ac.uk/static/data/homepage/'
 			},
 			live: {
-				path:'http://www.york.ac.uk/'
+				path:'https://www.york.ac.uk/'
 			}
 
 		},
