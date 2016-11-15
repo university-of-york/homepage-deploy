@@ -104,11 +104,10 @@ module.exports = function(grunt) {
 		screenshot: {
 			live: {
 				options: {
-          src: 'https://www-users.york.ac.uk/~cm1438/homepage/',
-					//src:'https://www.york.ac.uk',
+					src:'https://www.york.ac.uk',
 					dest:'upload/screenshots/homepage_' + dateStamp +'.jpg',
 					delay:1000,
-          viewport: '1240x1080'
+          viewport: '1024x1000'
 				}
 			}
 		},
@@ -166,7 +165,7 @@ module.exports = function(grunt) {
 		'confirm',
     // 'sftp:preview',
     'sftp:live',
-		'autoshot',
+		'screenshot',
 		'sftp:screenshot',
 		'open:live'
 	]);
