@@ -163,7 +163,6 @@ module.exports = function(grunt) {
   ]);
 	grunt.registerTask('live',[
 		'confirm',
-    // 'sftp:preview',
     'sftp:live',
 		'screenshot',
 		'sftp:screenshot',
