@@ -28,6 +28,8 @@ Handlebars.registerHelper('iconify', function(context) {
       return 'calendar';
     case 'Comment':
       return 'comment-o';
+    case 'York life':
+      return 'heart-o';
     default:
       return 'null';
   }
