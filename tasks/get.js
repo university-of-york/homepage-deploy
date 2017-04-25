@@ -30,6 +30,8 @@ Handlebars.registerHelper('iconify', function(context) {
       return 'comment-o';
     case 'York life':
       return 'heart-o';
+    case 'Festival of Ideas':
+      return 'lightbulb-o';
     default:
       return 'null';
   }
