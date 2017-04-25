@@ -1,6 +1,6 @@
-#Deploying homepage changes
+# Deploying homepage changes
 
-##One-off setup
+## One-off setup
 1. __Install NodeJS, Git and PhantomJS__  
 If you don't already have them, download them directly or via your favourite package manager.
 * __Install Grunt__  
@@ -36,17 +36,17 @@ In the root of the repository, create a file called .ftppass, paste in the code 
 }
 ~~~~
 
-##Day-to-day usage
+## Day-to-day usage
 ### Step 1: Make your changes in Contentful
 See the [documentation in the SMDC wiki](https://wiki.york.ac.uk/display/SMDC/Homepage+publishing+with+Contentful) for further details.
-###Step 2: Preview your changes
+### Step 2: Preview your changes
 
 From your local copy of the repository, run `grunt test`.
 
 This will get the current content from Contentful, incorporate it into index.shtml in the 'upload' folder, and SFTP the result to [http://www.york.ac.uk/static/data/homepage/](http://www.york.ac.uk/static/data/homepage/).
 
 
-###Step 3: Deploy to live
+### Step 3: Deploy to live
 Run `grunt live` to make the changes live. You'll be asked to confirm this step.
 
 Once the changes are live, a screenshot of the homepage will be taken and stored in [http://www.york.ac.uk/np/screenshots](http://www.york.ac.uk/np/screenshots).
