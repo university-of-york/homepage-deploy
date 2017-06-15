@@ -203,8 +203,9 @@
           <form action="https://www.york.ac.uk/study/undergraduate/courses/search" method="get" id="Course-Search" class="c-form c-form--joined js-course-search">
             <fieldset>
               <div class="c-form__element">
-                <input class="c-form__input c-form__input--text" type="text" id="q" name="q" placeholder="Search by course name, keywords or UCAS code" />
-                <a class="c-btn c-btn--medium js-submit-form" href="#" role="button" aria-label="Search"><i class="c-icon c-icon--search c-icon--after" aria-hidden="true"></i></a>
+                <input class="c-form__input c-form__input--hidden" type="hidden" id="mode" name="mode" value="">
+                <input class="c-form__input c-form__input--text" type="text" id="q" name="q" placeholder="Search by course name, keywords or UCAS code">
+                <a class="c-btn c-btn--medium js-submit-form" href="#" role="button"><i class="c-icon c-icon--search c-icon--after"></i></a>
               </div>
               <div class="c-form__element">
                 <div class="c-form__radio-group">
@@ -212,8 +213,12 @@
                   <label for="level-undergraduate" class="c-form__label">Undergraduate</label>
                 </div>
                 <div class="c-form__radio-group">
-                  <input class="c-form__radio" type="radio" id="level-postgraduate" name="level" value="postgraduate">
-                  <label for="level-postgraduate" class="c-form__label">Postgraduate</label>
+                  <input class="c-form__radio" type="radio" id="level-postgraduate-taught" name="level" value="postgraduate">
+                  <label for="level-postgraduate-taught" class="c-form__label">Postgraduate taught</label>
+                </div>
+                <div class="c-form__radio-group">
+                  <input class="c-form__radio" type="radio" id="level-postgraduate-research" name="level" value="postgraduate">
+                  <label for="level-postgraduate-research" class="c-form__label">Research</label>
                 </div>
               </div>
             </fieldset>
