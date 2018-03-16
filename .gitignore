@@ -3,3 +3,4 @@ upload/
 node_modules/
 .ftppass
 .grunt
+*/.DS_Store
