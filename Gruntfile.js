@@ -18,7 +18,7 @@ module.exports = function(grunt) {
 
 		curl: {
 			'template': {
-				src: 'http://www.york.ac.uk/static/data/homepage/homepage.html',
+				src: 'http://www.york.ac.uk/static/data/homepage/homepagePlusFoi.html',
 				dest: 'download/index_template.html'
 			}
 		},

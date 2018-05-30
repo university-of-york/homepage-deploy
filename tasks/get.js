@@ -1,3 +1,4 @@
+/*jshint node: true */
 'use strict';
 
 var Fs = require('fs');
@@ -9,7 +10,7 @@ var Request = require('request-promise');
 var Bluebird = require('bluebird');
 var Handlebars = require('handlebars');
 
-var homepageImageDir = "https://www.york.ac.uk/static/data/homepage/images/"
+var homepageImageDir = "https://www.york.ac.uk/static/data/homepage/images/";
 
 // format an ISO date using Moment.js
 // usage: {{dateFormat dateString format="MMMM YYYY"}}
@@ -145,7 +146,7 @@ module.exports = function(grunt) {
     }
 
     var layoutUrl = apiUrl;
-    layoutUrl+= '&content_type=homepageLayout';
+    layoutUrl+= '&content_type=homepagePlusFoILayout';
     layoutUrl+= '&fields.current=true';
     var layoutRequest = Request(layoutUrl);
 
@@ -249,6 +250,50 @@ module.exports = function(grunt) {
       });
     }
 
+    // Get foi stories
+    var foiCompile = compileTemplate('foi.hbs');
+    var foiImages = [];
+
+    // FoI items creation
+    function createFoi(layout) {
+      return foiCompile.then(function(foiTemplate) {
+        // foi template built
+        var foiItems = layout.items[0].fields.foiItems;
+        var foiAssets = layout.includes.Asset;
+        function makeFoiItem(i) {
+          var foiEntry = getEntry(foiItems[i], layout.includes.Entry);
+          var foiHtml = '<!-- no story -->';
+          if (typeof foiEntry != 'undefined') {
+            foiImages[i] = getAsset(foiEntry.fields.image, foiAssets);
+            var thisImage = foiImages[i] === false ? false : foiImages[i].fields.file.uoyurl ;
+            var thisImageAlt = foiImages[i] === false ? false : foiImages[i].fields.description ;
+            var foiContext = {
+              image: thisImage,
+              imageAlt: thisImageAlt,
+              title: foiEntry.fields.title,
+              excerpt: Marked(foiEntry.fields.excerpt),
+              link: foiEntry.fields.link
+            };
+            foiHtml = foiTemplate(foiContext);
+          }
+          var foiPath = Path.resolve(options.targetDir, 'foi/item'+i+'.html');
+          return writeFile(foiPath, foiHtml);
+        }
+        // Make HTML snippets and save images locally
+        var foiArray = [];
+        for (var i = 0; i < 4; i++) {
+          foiArray.push(makeFoiItem(i));
+          foiArray.push(saveAsset(foiImages[i]));
+        }
+        return Bluebird.all(foiArray);
+      }).then(function() {
+        grunt.log.ok('FoI items completed');
+        return Bluebird.resolve(true);
+      }).catch(function (err) {
+        fail(err);
+      });
+    }
+
     // Get news stories
     var newsCompile = compileTemplate('news.hbs');
     var newsImages = [];
@@ -304,7 +349,7 @@ module.exports = function(grunt) {
 
     // get layout then run build processes simultaneously
     fetchLayout().then(function(layout) {
-      return Bluebird.all([createBanner(layout), createResearch(layout), createNews(layout)]);
+      return Bluebird.all([createBanner(layout), createResearch(layout), createFoi(layout), createNews(layout)]);
     }).spread(function(a, b, c) {
       grunt.log.ok('Templates successfully created');
     }).catch(function(err) {
