@@ -272,7 +272,8 @@ module.exports = function(grunt) {
               imageAlt: thisImageAlt,
               title: foiEntry.fields.title,
               excerpt: Marked(foiEntry.fields.excerpt),
-              link: foiEntry.fields.link
+              link: foiEntry.fields.link,
+              publishDate: foiEntry.fields.publishDate,
             };
             foiHtml = foiTemplate(foiContext);
           }
