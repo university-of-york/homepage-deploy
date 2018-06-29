@@ -16,17 +16,17 @@ module.exports = function(grunt) {
 
 		clean: ['download','upload'],
 
-		curl: {
+		/*curl: {
 			'template': {
 				src: 'http://www.york.ac.uk/static/data/homepage/homepage.html',
 				dest: 'download/index_template.html'
 			}
-		},
+		},*/
 
 		bake: {
 			build: {
 				files: {
-					"upload/index.shtml": "download/index_template.html"
+					"upload/index.shtml": "layouts/homepage.html"
 				}
 			}
 		},
@@ -151,7 +151,7 @@ module.exports = function(grunt) {
 	//Tasks
   grunt.registerTask('default',[
     'clean',
-    'curl',
+    //'curl',
     'get',
     'bake'
   ]);
