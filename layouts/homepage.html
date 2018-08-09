@@ -37,6 +37,82 @@
  <!-- Print styles -->
  <link rel="stylesheet" href="https://www.york.ac.uk/static/stable/css/print.min.css" media="print">
 
+  <!-- Temporary styles for NHS banner -->
+  <style>
+    .o-grid__row--nhs:before,
+    .o-grid__row--nhs:after {
+      display:block;
+      content:'';
+      width:100%;
+      height:100%;
+      position:absolute;
+      top:0;
+    }
+    .o-grid__row--nhs:before {
+      right:100%;
+    }
+    .o-grid__row--nhs:after {
+      left:100%;
+    }
+    .o-grid__row--nhs {
+      padding-top:20px;
+    }
+    .o-grid__row--nhs + .o-grid__row {
+      padding-top:20px;
+    }
+    .o-grid__row--nhs + .o-grid__row--nhs {
+      padding-top:0;
+    }
+    .o-grid__row--nhs {
+      color:#fff;
+    }
+    .o-grid__row--nhs hr {
+      background-color:#fff;
+      color:#fff;
+    }
+    .o-grid__row--nhs a {
+      color:#eee;
+    }
+    .o-grid__row--nhs a:hover {
+      color:#ddd;
+    }
+    .o-grid__row--nhs {
+      background-color:#005EB8;
+    }
+    .o-grid__row--nhs:before,
+    .o-grid__row--nhs:after {
+      background-color:#005EB8;
+    }
+    .o-grid__row--nhs.o-grid__row--bordered {
+      border-bottom-color:#005Ea4;
+    }
+    .o-grid__row--nhs.o-grid__row--bordered:before,
+    .o-grid__row--nhs.o-grid__row--bordered:after {
+      border-bottom-color:#005Ea4;
+    }
+    .o-grid__row--nhs .c-news--excerpt {
+      padding-left: 20px;
+      padding-right: 20px;
+      padding-top: 20px;
+      padding-bottom: 20px;
+      background-color: #fff;
+    }
+    @media only screen and (max-width: 29.9375em) {
+      .o-grid__row--nhs .c-news--excerpt {
+        padding-left: 10px;
+        padding-right: 10px;
+      }
+    }
+    @media only screen and (max-width: 29.9375em) {
+      .o-grid__row--nhs .c-news--excerpt {
+        padding-top: 10px;
+      }
+    }
+    .o-grid__row--nhs .c-news--excerpt .c-news__title {
+      color:#005EB8;
+    }
+  </style>
+
 </head>
 
 <body id="homepage">
@@ -234,7 +310,7 @@
 <div class="o-wrapper o-wrapper--wide o-grid">
   <div class="o-grid__row" id="homepage-banner">
     <div class="o-grid__box o-grid__box--full">
-      <!--(bake banner/index.html)-->
+      <!--(bake ../download/banner/index.html)-->
     </div>
   </div>
 </div>
@@ -248,26 +324,29 @@
   </div>
 </div>
 <div class="o-grid__row o-grid__row--alt3">
-  <div class="o-grid__box o-grid__box--half">
+  <div class="o-grid__box o-grid__box--third o-grid__box--full@medium">
     <p class="">A member of the Russell Group, we are committed to strengthening our position as one of the world’s premier institutions for inspirational and life-changing research.</p>
   </div>
-  <div class="o-grid__box o-grid__box--half">
-      <p><a href="https://www.york.ac.uk/research/">Our research</a> is focused around seven themes which align our academic strengths to best meet the grand scientific, social and environmental challenges of our time.</p>
+  <div class="o-grid__box o-grid__box--third o-grid__box--half@medium o-grid__box--half@small">
+    <p>This week we're celebrating 70 years of the NHS by highlighting our research in health and medical sciences.</p>
+  </div>
+  <div class="o-grid__box o-grid__box--third o-grid__box--half@medium o-grid__box--half@small">
+    <p><img src="https://www.york.ac.uk/static/data/homepage/images/nhs_70.png"></p>
   </div>
 </div>
 
-<div class="o-grid__row o-grid__row--alt3 js-equal-height-row " id="homepage-research">
+<div class="o-grid__row o-grid__row--nhs js-equal-height-row " id="homepage-research">
   <div class="o-grid__box o-grid__box--quarter o-grid__box--quarter@medium o-grid__box--half@small o-grid__box--half@tiny">
-    <!--(bake research/item0.html)-->
+    <!--(bake ../download/research/item0.html)-->
   </div>
   <div class="o-grid__box o-grid__box--quarter o-grid__box--quarter@medium o-grid__box--half@small o-grid__box--half@tiny">
-    <!--(bake research/item1.html)-->
+    <!--(bake ../download/research/item1.html)-->
   </div>
   <div class="o-grid__box o-grid__box--quarter o-grid__box--quarter@medium o-grid__box--half@small o-grid__box--half@tiny ">
-    <!--(bake research/item2.html)-->
+    <!--(bake ../download/research/item2.html)-->
   </div>
   <div class="o-grid__box o-grid__box--quarter o-grid__box--quarter@medium o-grid__box--half@small o-grid__box--half@tiny">
-    <!--(bake research/item3.html)-->
+    <!--(bake ../download/research/item3.html)-->
   </div>
 </div>
 
@@ -281,24 +360,24 @@
     <div class="o-grid">
       <div class="o-grid__row">
         <div class="o-grid__box o-grid__box--third o-grid__box--third@small o-grid__box--half@tiny">
-          <!--(bake news/item0.html)-->
+          <!--(bake ../download/news/item0.html)-->
         </div>
         <div class="o-grid__box o-grid__box--third o-grid__box--third@small o-grid__box--half@tiny">
-          <!--(bake news/item1.html)-->
+          <!--(bake ../download/news/item1.html)-->
         </div>
         <div class="o-grid__box o-grid__box--third o-grid__box--third@small o-grid__box--full@tiny">
-          <!--(bake news/item2.html)-->
+          <!--(bake ../download/news/item2.html)-->
         </div>
       </div>
       <div class="o-grid__row">
         <div class="o-grid__box o-grid__box--third o-grid__box--third@small o-grid__box--half@tiny ">
-          <!--(bake news/item3.html)-->
+          <!--(bake ../download/news/item3.html)-->
         </div>
         <div class="o-grid__box o-grid__box--third o-grid__box--third@small o-grid__box--half@tiny">
-          <!--(bake news/item4.html)-->
+          <!--(bake ../download/news/item4.html)-->
         </div>
         <div class="o-grid__box o-grid__box--third o-grid__box--third@small o-grid__box--full@tiny">
-          <!--(bake news/item5.html)-->
+          <!--(bake ../download/news/item5.html)-->
         </div>
       </div>
     </div>
@@ -328,13 +407,13 @@
 </div>
 
 
-<div class="o-grid__row o-grid__row--alt1">
+<div class="o-grid__row o-grid__row--nhs">
   <div class="o-grid__box o-grid__box--twothrids">
     <h2>Campus and city life</h2>
     <p>Our safe and inclusive campus environment and our student-friendly city provide everything you need to make the most of your university experience.</p>
   </div>
 </div>
-<div class="o-grid__row o-grid__row--alt1" id="homepage-campus-city">
+<div class="o-grid__row o-grid__row--nhs" id="homepage-campus-city">
   <div class="o-grid__box o-grid__box--third o-grid__box--full@small">
     <a class="c-figure c-figure--link" href="https://www.york.ac.uk/study/student-life/">
       <img class="c-figure__image" alt="" src="https://www.york.ac.uk/static/data/homepage/images/campus-city/student-life-600px.jpg" width="600" height="400">
