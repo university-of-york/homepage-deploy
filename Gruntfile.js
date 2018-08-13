@@ -16,13 +16,6 @@ module.exports = function(grunt) {
 
 		clean: ['download','upload'],
 
-		/*curl: {
-			'template': {
-				src: 'http://www.york.ac.uk/static/data/homepage/homepage.html',
-				dest: 'download/index_template.html'
-			}
-		},*/
-
 		bake: {
 			build: {
 				files: {
