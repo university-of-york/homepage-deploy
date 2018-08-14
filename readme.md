@@ -1,5 +1,7 @@
 # Deploying homepage changes
 
+[![Build Status](https://semaphoreci.com/api/v1/university-of-york/homepage-deploy/branches/master/badge.svg)](https://semaphoreci.com/university-of-york/homepage-deploy)
+
 ## One-off setup
 1. __Install NodeJS, Git and PhantomJS__  
 If you don't already have them, download them directly or via your favourite package manager.

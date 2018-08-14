@@ -160,4 +160,10 @@ module.exports = function(grunt) {
 		'sftp:screenshot',
 		'open:live'
 	]);
+    grunt.registerTask('livedeploy',[
+        'sftp:live',
+        'screenshot',
+        'sftp:screenshot',
+        'open:live'
+    ]);
 };
