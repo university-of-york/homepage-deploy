@@ -197,34 +197,47 @@
       </div>
     </div>
 
+    <!--Course Search-->
     <div class="o-grid__box o-grid__box--half o-grid__box--half@large o-grid__box--half@medium">
-      <!-- COURSE SEARCH -->
-        <div class="c-panel c-panel--highlight">
-          <div class="c-panel__content">
-          <h3>Find a course</h3>
-          <form action="https://www.york.ac.uk/study/undergraduate/courses/search" method="get" id="Course-Search" class="c-form c-form--joined js-course-search">
-            <fieldset>
-              <div class="c-form__element">
-                <input class="c-form__input c-form__input--hidden" type="hidden" id="mode" name="mode" value="">
-                <input class="c-form__input c-form__input--text" type="text" id="q" name="q" placeholder="Search by course name, keywords or UCAS code">
-                <a class="c-btn c-btn--medium js-submit-form" href="#" role="button"><i class="c-icon c-icon--search c-icon--after"></i></a>
-              </div>
-              <div class="c-form__element">
-                <div class="c-form__radio-group">
-                  <input class="c-form__radio" type="radio" id="level-undergraduate" name="level" value="undergraduate" checked="checked">
-                  <label for="level-undergraduate" class="c-form__label">Undergraduate</label>
+      <div class="c-tabs c-tabs--horizontal c-tabs--dark js-tabs">
+        <ul role="tablist" class="c-tabs__nav">
+          <li class="c-tabs__tab is-active"><a role="tab" aria-controls="course-search" class="c-tabs__link" href="#search-courses" aria-selected="true">Search for a course</a></li>
+          <li class="c-tabs__tab"><a role="tab" aria-controls="course-browse" class="c-tabs__link" href="#browse-courses" aria-selected="false">Browse courses</a></li>
+        </ul>
+        <div class="c-tabs__container">
+          <div role="tabpanel" class="c-tabs__content is-active" aria-hidden="false" id="search-courses">
+            <form action="/study/undergraduate/courses/search/" method="get" id="Course-Search" class="c-form c-form--joined js-course-search" _lpchecked="1">
+              <fieldset>
+                <div class="c-form__element">
+                  <input class="c-form__input c-form__input--hidden" id="mode" name="mode" value="" type="hidden">
+                  <input class="c-form__input c-form__input--text" id="q" name="q" placeholder="Search by keywords or UCAS code" type="text">
+                  <a class="c-btn c-btn--medium js-submit-form" href="#" role="button"><i class="c-icon c-icon--search c-icon--after"></i></a>
                 </div>
-                <div class="c-form__radio-group">
-                  <input class="c-form__radio" type="radio" id="level-postgraduate-taught" name="level" value="postgraduate">
-                  <label for="level-postgraduate-taught" class="c-form__label">Postgraduate taught</label>
+                <div class="c-form__element">
+                  <div class="c-form__radio-group">
+                    <input class="c-form__radio" id="level-undergraduate" name="level" value="undergraduate" checked="checked" type="radio">
+                    <label for="level-undergraduate" class="c-form__label">Undergraduate</label>
+                  </div>
+                  <div class="c-form__radio-group">
+                    <input class="c-form__radio" id="level-postgraduate-taught" name="level" value="postgraduate" type="radio">
+                    <label for="level-postgraduate-taught" class="c-form__label">Postgraduate taught</label>
+                  </div>
+                  <div class="c-form__radio-group">
+                    <input class="c-form__radio" id="level-postgraduate-research" name="level" value="postgraduate" type="radio">
+                    <label for="level-postgraduate-research" class="c-form__label">Research</label>
+                  </div>
                 </div>
-                <div class="c-form__radio-group">
-                  <input class="c-form__radio" type="radio" id="level-postgraduate-research" name="level" value="postgraduate">
-                  <label for="level-postgraduate-research" class="c-form__label">Research</label>
-                </div>
-              </div>
-            </fieldset>
-          </form>
+              </fieldset>
+            </form>
+          </div>
+          <div role="tabpanel" class="c-tabs__content" aria-hidden="true" id="browse-courses">
+            <ul class="u-two-columns">
+              <li><a href="/study/undergraduate/courses/all">Undergraduate courses</a></li>
+              <li><a href="/study/postgraduate/courses/all?mode=taught&amp;q=&amp;level=postgraduate">Postgraduate taught courses </a></li>
+              <li><a href="/study/postgraduate/courses/all?mode=research&amp;q=&amp;level=postgraduate">Research degrees</a></li>
+              <li><a href="/distance-learning/courses">Online and distance learning courses</a></li>
+            </ul>
+          </div>
         </div>
       </div>
     </div>
