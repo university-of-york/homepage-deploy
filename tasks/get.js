@@ -26,6 +26,8 @@ Handlebars.registerHelper('iconify', function(context) {
       return 'podcast';
     case 'News':
       return 'newspaper-o';
+    case 'Brexit':
+      return 'info';
     case 'Event':
       return 'calendar';
     case 'Comment':
