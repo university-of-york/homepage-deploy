@@ -9,7 +9,6 @@
     "grunt-bake": "^0.3.12",
     "grunt-confirm": "^0.1.6",
     "grunt-contrib-clean": "^0.6.0",
-    "grunt-curl": "^2.1.0",
     "grunt-open": "^0.2.3",
     "grunt-ssh": "^0.12.9",
     "grunt-step": "^0.2.0",
