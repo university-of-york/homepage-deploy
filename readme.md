@@ -65,7 +65,7 @@ Once the changes are live, a screenshot of the homepage will be taken and stored
 
 If changes are needed to parts of the homepage which aren't built by the content from Contentful (recent examples included the inclusion of a the _Cookies_ link in the footer and the addition of tabs to the course search box), you should edit the [homepage layout](./layouts/homepage.html). You should also make the same changes to the alternative homepage layouts below.
 
-The team responsible for homepage publishes will also need to be informed, so that they can `git pull` the up-to-date evrsion of the repository.
+The team responsible for homepage publishes will also need to be informed, so that they can `git pull` the up-to-date version of the repository.
 
 ## Alternative homepage layouts
 
