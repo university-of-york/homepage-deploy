@@ -144,10 +144,7 @@ module.exports = function(grunt) {
 	//Tasks
   grunt.registerTask('default',[
     'clean',
-<<<<<<< HEAD
-=======
     //'curl',
->>>>>>> big-banner
     'get',
     'bake'
   ]);
