@@ -22,8 +22,12 @@ Handlebars.registerHelper('dateFormat', function(context, block) {
 // usage: {{iconify categoryName}}
 Handlebars.registerHelper('iconify', function(context) {
   switch (context) {
+    case 'Podcast':
+      return 'podcast';
     case 'News':
       return 'newspaper-o';
+    case 'Brexit':
+      return 'info';
     case 'Event':
       return 'calendar';
     case 'Comment':
