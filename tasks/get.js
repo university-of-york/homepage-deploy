@@ -172,17 +172,27 @@ module.exports = function(grunt) {
     }
 
     // Get banner item (it's called mastheadItem in Contentful)
-    var bannerCompile = compileTemplate('banner.hbs');
-    var bannerImage;
+    var bannerCompileSingle = compileTemplate('singlebanner.hbs');
+    var bannerCompileDouble = compileTemplate('doublebanner.hbs');
+    var bannerImages = [];
 
     // Banner creation
     function createBanner(layout) {
+      if( false ) {
+        return zzz(layout,bannerCompileSingle);
+      } else {
+        return zzz(layout,bannerCompileDouble);
+      }
+    }
+
+    function zzz(layout,bannerCompile) {
       return bannerCompile.then(function (bannerTemplate) {
         // Banner template built
         var bannerItem = layout.items[0].fields.mainBanner;
         var bannerEntry = getEntry(bannerItem, layout.includes.Entry);
         var bannerAssets = layout.includes.Asset;
-        bannerImage = getAsset(bannerEntry.fields.bannerImage, bannerAssets);
+        var bannerImage = getAsset(bannerEntry.fields.bannerImage, bannerAssets);
+        bannerImages.push( bannerImage );
         var thisImage = bannerImage === false ? false : bannerImage.fields.file.uoyurl ;
         var thisImageAlt = bannerImage === false ? false : bannerImage.fields.description ;
         var bannerContext = {
@@ -200,7 +210,11 @@ module.exports = function(grunt) {
         var bannerPath = Path.resolve(options.targetDir, 'banner/index.html');
         return writeFile(bannerPath, bannerHtml);
       }).then(function() {
-        return saveAsset(bannerImage);
+        var saveBannerImages = [];
+        for (var i = 0; i < bannerImages.length; i++) {
+          saveBannerImages.push(saveAsset(bannerImages[i]));
+        }
+        return Bluebird.all(saveBannerImages);
       }).then(function() {
         grunt.log.ok('Banner items completed');
         return Bluebird.resolve(true);
