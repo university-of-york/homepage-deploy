@@ -178,31 +178,44 @@ module.exports = function(grunt) {
 
     // Banner creation
     function createBanner(layout) {
-      if( false ) {
-        return zzz(layout,bannerCompileSingle);
+      // Single or double banner?
+      if( layout.items[0].fields.banners.length > 1 ) {
+        return createBannerType(layout,bannerCompileDouble);
       } else {
-        return zzz(layout,bannerCompileDouble);
+        return createBannerType(layout,bannerCompileSingle);
       }
     }
 
-    function zzz(layout,bannerCompile) {
+    function createBannerType(layout,bannerCompile) {
       return bannerCompile.then(function (bannerTemplate) {
         // Banner template built
-        var bannerItem = layout.items[0].fields.mainBanner;
-        var bannerEntry = getEntry(bannerItem, layout.includes.Entry);
-        var bannerAssets = layout.includes.Asset;
-        var bannerImage = getAsset(bannerEntry.fields.bannerImage, bannerAssets);
-        bannerImages.push( bannerImage );
-        var thisImage = bannerImage === false ? false : bannerImage.fields.file.uoyurl ;
-        var thisImageAlt = bannerImage === false ? false : bannerImage.fields.description ;
-        var bannerContext = {
-          bannerImage: thisImage,
-          bannerImageAlt: thisImageAlt,
-          title: bannerEntry.fields.title,
-          excerpt: Marked(bannerEntry.fields.excerpt),
-          bannerLink: bannerEntry.fields.buttonLink,
-          buttonText: bannerEntry.fields.buttonText
-        };
+
+        var bannerContext = { banners:[] };
+
+        layout.items[0].fields.banners.map( bannerItem => {
+          var bannerEntry = getEntry(bannerItem, layout.includes.Entry);
+          var bannerAssets = layout.includes.Asset;
+          var bannerImage = getAsset(bannerEntry.fields.bannerImage, bannerAssets);
+          bannerImages.push( bannerImage );
+          var bannerImageDouble = getAsset(bannerEntry.fields.bannerImageDouble, bannerAssets);
+          bannerImages.push( bannerImageDouble );
+          var thisImage = bannerImage === false ? false : bannerImage.fields.file.uoyurl;
+          var thisImageDouble = bannerImageDouble === false ? false : bannerImageDouble.fields.file.uoyurl;
+          var thisImageAlt = bannerImage === false ? false : bannerImage.fields.description;
+
+          bannerContext.banners.push( {
+            bannerImage: thisImage,
+            bannerImageDouble: thisImageDouble,
+            bannerImageAlt: thisImageAlt,
+            bannerCategory: bannerEntry.fields.category,
+            title: bannerEntry.fields.title,
+            excerpt: Marked(bannerEntry.fields.excerpt),
+            bannerLink: bannerEntry.fields.buttonLink,
+            buttonText: bannerEntry.fields.buttonText
+          } );
+
+        } );
+
         return bannerTemplate(bannerContext);
       }).catch(function (err) {
         fail(err);
