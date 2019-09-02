@@ -172,27 +172,50 @@ module.exports = function(grunt) {
     }
 
     // Get banner item (it's called mastheadItem in Contentful)
-    var bannerCompile = compileTemplate('banner.hbs');
-    var bannerImage;
+    var bannerCompileSingle = compileTemplate('singlebanner.hbs');
+    var bannerCompileDouble = compileTemplate('doublebanner.hbs');
+    var bannerImages = [];
 
     // Banner creation
     function createBanner(layout) {
+      // Single or double banner?
+      if( layout.items[0].fields.banners.length > 1 ) {
+        return createBannerType(layout,bannerCompileDouble);
+      } else {
+        return createBannerType(layout,bannerCompileSingle);
+      }
+    }
+
+    function createBannerType(layout,bannerCompile) {
       return bannerCompile.then(function (bannerTemplate) {
         // Banner template built
-        var bannerItem = layout.items[0].fields.mainBanner;
-        var bannerEntry = getEntry(bannerItem, layout.includes.Entry);
-        var bannerAssets = layout.includes.Asset;
-        bannerImage = getAsset(bannerEntry.fields.bannerImage, bannerAssets);
-        var thisImage = bannerImage === false ? false : bannerImage.fields.file.uoyurl ;
-        var thisImageAlt = bannerImage === false ? false : bannerImage.fields.description ;
-        var bannerContext = {
-          bannerImage: thisImage,
-          bannerImageAlt: thisImageAlt,
-          title: bannerEntry.fields.title,
-          excerpt: Marked(bannerEntry.fields.excerpt),
-          bannerLink: bannerEntry.fields.buttonLink,
-          buttonText: bannerEntry.fields.buttonText
-        };
+
+        var bannerContext = { banners:[] };
+
+        layout.items[0].fields.banners.map( bannerItem => {
+          var bannerEntry = getEntry(bannerItem, layout.includes.Entry);
+          var bannerAssets = layout.includes.Asset;
+          var bannerImage = getAsset(bannerEntry.fields.bannerImage, bannerAssets);
+          bannerImages.push( bannerImage );
+          var bannerImageDouble = getAsset(bannerEntry.fields.bannerImageDouble, bannerAssets);
+          bannerImages.push( bannerImageDouble );
+          var thisImage = bannerImage === false ? false : bannerImage.fields.file.uoyurl;
+          var thisImageDouble = bannerImageDouble === false ? false : bannerImageDouble.fields.file.uoyurl;
+          var thisImageAlt = bannerImage === false ? false : bannerImage.fields.description;
+
+          bannerContext.banners.push( {
+            bannerImage: thisImage,
+            bannerImageDouble: thisImageDouble,
+            bannerImageAlt: thisImageAlt,
+            bannerCategory: bannerEntry.fields.category,
+            title: bannerEntry.fields.title,
+            excerpt: Marked(bannerEntry.fields.excerpt),
+            bannerLink: bannerEntry.fields.buttonLink,
+            buttonText: bannerEntry.fields.buttonText
+          } );
+
+        } );
+
         return bannerTemplate(bannerContext);
       }).catch(function (err) {
         fail(err);
@@ -200,7 +223,11 @@ module.exports = function(grunt) {
         var bannerPath = Path.resolve(options.targetDir, 'banner/index.html');
         return writeFile(bannerPath, bannerHtml);
       }).then(function() {
-        return saveAsset(bannerImage);
+        var saveBannerImages = [];
+        for (var i = 0; i < bannerImages.length; i++) {
+          saveBannerImages.push(saveAsset(bannerImages[i]));
+        }
+        return Bluebird.all(saveBannerImages);
       }).then(function() {
         grunt.log.ok('Banner items completed');
         return Bluebird.resolve(true);
