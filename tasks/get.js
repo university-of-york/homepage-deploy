@@ -195,10 +195,19 @@ module.exports = function(grunt) {
         layout.items[0].fields.banners.map( bannerItem => {
           var bannerEntry = getEntry(bannerItem, layout.includes.Entry);
           var bannerAssets = layout.includes.Asset;
-          var bannerImage = getAsset(bannerEntry.fields.bannerImage, bannerAssets);
-          bannerImages.push( bannerImage );
-          var bannerImageDouble = getAsset(bannerEntry.fields.bannerImageDouble, bannerAssets);
-          bannerImages.push( bannerImageDouble );
+          
+          var bannerImage = false;
+          if( bannerEntry.fields.bannerImage ) {
+            var bannerImage = getAsset(bannerEntry.fields.bannerImage,bannerAssets);
+            bannerImages.push( bannerImage );
+          }
+
+          var bannerImageDouble = false;
+          if( bannerEntry.fields.bannerImageDouble ) {
+            var bannerImageDouble = getAsset(bannerEntry.fields.bannerImageDouble,bannerAssets);
+            bannerImages.push( bannerImageDouble );
+          }
+
           var thisImage = bannerImage === false ? false : bannerImage.fields.file.uoyurl;
           var thisImageDouble = bannerImageDouble === false ? false : bannerImageDouble.fields.file.uoyurl;
           var thisImageAlt = bannerImage === false ? false : bannerImage.fields.description;
