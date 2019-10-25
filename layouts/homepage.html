@@ -108,7 +108,8 @@
                 <div class="c-utility-nav__subnav" aria-hidden="true" role="menu">
                   <ul class="c-utility-nav__sublist">
                     <li class="c-utility-nav__subitem" role="menuitem"><a class="c-utility-nav__sublink" href="https://www.york.ac.uk/study/undergraduate/courses/all" tabindex="-1">Undergraduate courses</a></li>
-                    <li class="c-utility-nav__subitem" role="menuitem"><a class="c-utility-nav__sublink" href="https://www.york.ac.uk/study/postgraduate/courses/all" tabindex="-1">Postgraduate courses</a></li>
+                    <li class="c-utility-nav__subitem" role="menuitem"><a class="c-utility-nav__sublink" href="https://www.york.ac.uk/study/postgraduate/courses/all?q=&mode=taught&level=postgraduate" tabindex="-1">Postgraduate taught courses</a></li>
+                    <li class="c-utility-nav__subitem" role="menuitem"><a class="c-utility-nav__sublink" href="https://www.york.ac.uk/study/postgraduate/courses/all?q=&mode=research&level=postgraduate" tabindex="-1">Postgraduate research courses</a></li>
                   </ul>
                   <ul class="c-utility-nav__sublist">
                     <li class="c-utility-nav__subitem" role="menuitem"><a class="c-utility-nav__sublink" href="https://www.york.ac.uk/about/departments/academic/" tabindex="-1">Departments and centres</a></li>
@@ -137,14 +138,14 @@
           <form action="https://www.york.ac.uk/search" method="get" class="c-form c-form--joined c-form--header is-hidden@medium-" autocomplete="off">
             <fieldset>
               <div class="c-form__element">
-                <input class="c-form__input c-form__input--text" type="text" id="q" name="q" aria-label="Search" placeholder="Search york.ac.uk" />
+                <input class="c-form__input c-form__input--text" type="text" id="q-search" name="q" aria-label="Search" placeholder="Search york.ac.uk" />
                 <input type="hidden" name="site" value="yorkweb">
                 <button type="submit" class="c-btn c-btn--medium" aria-label="Search"><i class="c-icon c-icon--search"></i></button>
               </div>
             </fieldset>
           </form>
           <!-- Mobile search -->
-          <a href="#Mobile-Search" class="c-mobile-search-button js-toggle-button is-hidden@large+" aria-label="Search"><i class="c-icon c-icon--search" aria-hidden="true"></i></a>
+          <a href="#Mobile-Search" class="c-mobile-search-button js-toggle-mobile-search is-hidden@large+" aria-label="Search"><i class="c-icon c-icon--search" aria-hidden="true"></i></a>
         </div>
       </div>
     </div>
@@ -247,7 +248,7 @@
                   <input class="c-form__input c-form__input--text" id="q" name="q" placeholder="Search by keywords or UCAS code" type="text" aria-label="Search courses">
                   <button type="submit" class="c-btn c-btn--medium" aria-label="Search"><i class="c-icon c-icon--search"></i></button>
                 </div>
-                <div class="c-form__element c-form__element--wrap">
+                <div class="c-form__element c-form__element--wrap" role="radiogroup" aria-label="Course type">
                   <div class="c-form__radio-group">
                     <input class="c-form__radio" id="level-undergraduate" name="level" value="undergraduate" checked="checked" type="radio">
                     <label for="level-undergraduate" class="c-form__label">Undergraduate</label>
@@ -278,13 +279,7 @@
   </div>
 </div>
 
-<div class="o-wrapper o-wrapper--wide o-grid">
-  <div class="o-grid__row" id="homepage-banner">
-    <div class="o-grid__box o-grid__box--full">
-      <!--(bake ../download/banner/index.html)-->
-    </div>
-  </div>
-</div>
+<!--(bake ../download/banner/index.html)-->
 
 <div class="o-wrapper o-grid">
 

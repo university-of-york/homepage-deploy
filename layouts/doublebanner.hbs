@@ -1,0 +1,16 @@
+<div class="o-wrapper o-grid">
+  <div class="o-grid__row" id="homepage-banner">
+    {{#each banners}}
+    <div class="o-grid__box o-grid__box--half">
+      {{#if bannerLink}}<a href="{{bannerLink}}"{{else}}<div{{/if}} class="c-figure c-figure--link" style="height:auto;">{{#if bannerImage}}
+        <img class="c-figure__image" src="{{bannerImageDouble}}" alt="">{{/if}}
+        <div class="c-figure__content c-figure__content--teal">
+          <div class="c-label">{{bannerCategory}}</div>
+          <h3>{{title}}</h3>
+          {{{excerpt}}}
+        </div>
+      {{#if bannerLink}}</a>{{else}}</div>{{/if}}
+    </div>
+    {{/each}}
+  </div>
+</div>
