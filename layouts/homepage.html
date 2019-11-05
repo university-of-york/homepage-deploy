@@ -45,6 +45,30 @@
  })(window,document,'script','dataLayer','GTM-WXLX54');</script>
  <!-- End Google Tag Manager -->
 
+ <!-- Temporary styles for big banner -->
+ <style>
+ @media only screen and (min-width: 40em) {
+   .c-figure--big-banner {
+     min-height:550px;
+   }
+ }
+ @media only screen and (min-width: 52.5em) {
+   .c-figure--big-banner h3 {
+     font-size:3rem;
+   }
+ }
+ @media only screen and (min-width: 40em) and (max-width: 52.4375em) {
+   .c-figure--big-banner h3 {
+     font-size:2.5rem;
+   }
+ }
+ @media only screen and (max-width: 39.9375em) {
+   .c-figure--big-banner h3 {
+     font-size:2rem;
+   }
+ }
+ </style>
+
 </head>
 
 <body id="homepage">
@@ -183,7 +207,59 @@
   </ul>
 </nav>
 
-<div class="o-wrapper o-wrapper--main o-grid" id="Main-Content">
+<!--(bake ../download/banner/index.html)-->
+
+<div class="o-wrapper o-grid">
+
+    <div class="t-york-unlimited">
+      <div class="o-grid__row o-grid__row--alt1  text-left" style="padding-top:20px;">
+        <div class="o-grid__box o-grid__box--full">
+          <h3>Find a Giving Day cause you're passionate about</h3>
+        </div>
+      </div>
+      <div class="o-grid__row o-grid__row--alt1 js-equal-height-row" style="padding-bottom:20px;">
+        <div class="o-grid__box o-grid__box--quarter">
+          <a class="c-panel c-panel-- c-panel--link" href="https://unlimited.hubbub.net/p/YorkOpportunityScholarships/">
+            <div class="c-panel__content">
+              <h3>York Opportunity Scholarship</h3>
+              <p>Support students who have overcome the most significant barriers in their personal, social and domestic life.</p>
+              <p class="c-panel__more">Read more</p>
+            </div>
+          </a>
+        </div>
+        <div class="o-grid__box o-grid__box--quarter">
+          <a class="c-panel c-panel-- c-panel--link" href="https://unlimited.hubbub.net/p/YorkFuturesScholarships/">
+            <div class="c-panel__content">
+              <h3>York Futures Scholarships</h3>
+              <p>Enable students to access opportunities that give them a head start in the job market.</p>
+              <p class="c-panel__more">Read more</p>
+            </div>
+          </a>
+        </div>
+        <div class="o-grid__box o-grid__box--quarter">
+          <a class="c-panel c-panel-- c-panel--link" href="https://unlimited.hubbub.net/p/MentallyFitYork/">
+            <div class="c-panel__content">
+              <h3>Mentally Fit <br>York</h3>
+              <p>Funding initiatives to improve mental health at York and groundbreaking mental health research.</p>
+              <p class="c-panel__more">Read more</p>
+            </div>
+          </a>
+        </div>
+        <div class="o-grid__box o-grid__box--quarter">
+          <a class="c-panel c-panel-- c-panel--link" href="https://unlimited.hubbub.net/p/MentalHealthNursingScholarships/">
+            <div class="c-panel__content">
+              <h3>Mental Health Nursing Scholarships</h3>
+              <p>Supporting nursing students on mandatory unpaid training placements.</p>
+              <p class="c-panel__more">Read more</p>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+
+</div>
+
+<div class="o-wrapper o-wrapper--main o-grid">
   <div class="o-grid__row o-grid__row--default">
     <div class="o-grid__box o-grid__box--half  o-grid__box--half@large o-grid__box--half@medium">
       <div class="o-grid">
@@ -255,30 +331,9 @@
   </div>
 </div>
 
-<!--(bake ../download/banner/index.html)-->
-
-<div class="o-wrapper o-grid">
-
-  <div class="t-york-unlimited text-center">
-    <div class="o-grid__row o-grid__row--alt1">
-      <div class="o-grid__box o-grid__box--third o-grid__box--full@medium">
-        <a href="https://unlimited.hubbub.net/">
-          <img src="https://www.york.ac.uk/static/data/homepage/images/giving-day-landscape-white.png" alt="York Unlimited Giving Day">
-        </a>
-      </div>
-      <div class="o-grid__box o-grid__box--twothirds o-grid__box--full@medium">
-        <h2>Giving Day - 6 and 7 November</h2>
-        <p>The first ever <strong>York Unlimited Giving Day</strong> is coming. There will be 36 hours to fund life-changing initiatives. Right now, you can get involved in three&nbsp;ways: </p>
-        <p class="cta">
-          <a class="c-btn c-btn--medium" href="https://unlimited.hubbub.net/ambassador/"> <i class="c-icon c-icon--user c-icon--before"></i>Become an ambassador</a>
-          <a class="c-btn c-btn--medium" href="https://unlimited.hubbub.net"><i class="c-icon c-icon--calendar c-icon--before"></i> Save the date</a>
-          <a class="c-btn c-btn--medium" href="https://www.yorkspace.net/donate-form"><i class="c-icon c-icon--gift c-icon--before"></i> Give today</a>
-        </p>
-      </div>
-    </div>
-  </div>
-
 <!-- RESEARCH -->
+<div class="o-wrapper o-grid">
+    
 <div class="o-grid__row o-grid__row--alt3  ">
   <div class="o-grid__box o-grid__box--full">
     <h2>Explore our research</h2>
@@ -517,7 +572,7 @@
 </footer>
 
 <!-- global alert function -->
-<script src="https://www.york.ac.uk/static/globalalert/globalalert.js" async defer></script>
+<!-- <script src="https://www.york.ac.uk/static/globalalert/globalalert.js" async defer></script> -->
 
 </body>
 

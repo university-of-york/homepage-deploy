@@ -1,16 +1,43 @@
-<div class="o-wrapper o-wrapper--wide o-grid">
+<div class="o-wrapper o-wrapper--wide o-grid" id="Main-Content">
   <div class="o-grid__row" id="homepage-banner">
-    {{#each banners}}
     <div class="o-grid__box o-grid__box--full">
-      {{#if bannerLink}}<a href="{{bannerLink}}"{{else}}<div{{/if}} class="c-figure c-figure--banner c-figure--no-margin c-figure--full-width">{{#if bannerImage}}
-        <img class="c-figure__image" src="{{bannerImage}}" alt="">{{/if}}
-        <div class="c-figure__content c-figure__content--left c-figure__content--third">
-          <h3>{{title}}</h3>
-          {{{excerpt}}}{{#if buttonText}}
-          <button class="c-btn c-btn--medium c-btn--block" role="button">{{buttonText}}</button>{{/if}}
+      <a href="https://unlimited.hubbub.net/" class="c-figure c-figure--banner c-figure--no-margin c-figure--full-width c-figure--big-banner">
+        <img class="c-figure__image" src="https://www.york.ac.uk/static/data/homepage/images/anna-donate-1900x1400.jpg" alt="">
+        <div class="c-figure__content c-figure__content--right c-figure__content--half t-york-unlimited text-center">
+          <h3><img style="width:300px; margin:0 auto;" src="https://www.york.ac.uk/static/data/homepage/images/Giving_Day_Landscape_White_no_padding.png" alt="York Unlimited Giving Day"></h3>
+          <p>The <strong>York Unlimited Giving Day</strong> is here!</p>
+          <p>There are 36 hours on the clock, and some life-changing initiatives at York that need funding. Are you ready to help us create change?</p>
+          
+          <script>
+            document.write( "<p id=\"countdown\"></p>" );
+            var deadline = new Date("Nov 07, 2019 21:00:00").getTime();
+            var timer = setInterval(function()
+            {
+              var now = new Date().getTime();
+              var t = deadline - now;
+              var hours = Math.floor(t / (1000 * 60 * 60));
+              var minutes = Math.floor((t % (1000 * 60 * 60)) / (1000 * 60));
+              var seconds = Math.floor((t % (1000 * 60)) / 1000);
+
+              var countdown = "";
+              countdown += "<i aria-hidden=\"true\" class=\"c-icon c-icon--before c-icon--clock-o\"></i> ";
+              countdown += "<strong>" + hours + "</strong> hour" + ( hours == 1 ? "" : "s" ) + ", ";
+              countdown += "<strong>" + minutes + "</strong> minute" + ( minutes == 1 ? "" : "s" ) + " and ";
+              countdown += "<strong>" + seconds + "</strong> second" + ( seconds == 1 ? "" : "s" ) + " to go.";
+
+              document.getElementById("countdown").innerHTML = countdown;
+              
+              if (t < 0)
+              {
+                clearInterval( timer );
+                document.getElementById("countdown").innerHTML = "Time's up!";
+              }
+            } , 1000 );
+          </script>
+          
+          <p><button class="c-btn c-btn--medium c-btn--block c-btn--secondary" role="button">Get involved with Giving Day</button></p>
         </div>
-      {{#if bannerLink}}</a>{{else}}</div>{{/if}}
+      </a>
     </div>
-    {{/each}}
   </div>
 </div>
