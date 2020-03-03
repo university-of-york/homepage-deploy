@@ -101,21 +101,6 @@ module.exports = function(grunt) {
 			}
 		},
 
-		open: {
-			test: { path:'https://www.york.ac.uk/static/data/homepage/' },
-			live: { path:'https://www.york.ac.uk/' }
-		},
-
-		confirm: {
-			sftp: {
-				options: {
-					// Static text.
-					question: 'This will deploy your local copy of index.html to the live site.\nHave you tested it? If in doubt, run "grunt test" again. (y/n)',
-					continue: function(answer) { return answer.toLowerCase() === 'y'; }
-				}
-			}
-		},
-
 		get: {
 			api: {
 				layoutDir: 'layouts',
@@ -141,22 +126,18 @@ module.exports = function(grunt) {
 	grunt.registerTask('test',[
 		'default',
 		'sftp:images',
-		'sftp:test',
-		'open:test'
+		'sftp:test'
 	]);
 	
 	grunt.registerTask('live',[
-		'confirm',
 		'sftp:live',
 		'screenshot',
-		'sftp:screenshot',
-		'open:live'
+		'sftp:screenshot'
 	]);
 
 	grunt.registerTask('livedeploy',[
 		'sftp:live',
 		'screenshot',
-		'sftp:screenshot',
-		'open:live'
+		'sftp:screenshot'
 	]);
 };
