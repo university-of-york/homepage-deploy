@@ -172,17 +172,30 @@ module.exports = function(grunt) {
     }
 
     // Get banner item (it's called mastheadItem in Contentful)
-    var bannerCompileSingle = compileTemplate('singlebanner.hbs');
-    var bannerCompileDouble = compileTemplate('doublebanner.hbs');
+    var bannerCompileSingle = compileTemplate('banner_single.hbs');
+    var bannerCompileDouble = compileTemplate('banner_double.hbs');
+    var bannerCompileBig = compileTemplate('banner_big.hbs');
     var bannerImages = [];
 
     // Banner creation
     function createBanner(layout) {
+
       // Single or double banner?
-      if( layout.items[0].fields.banners.length > 1 ) {
+      if( layout.items[0].fields.banners.length > 1 )
+      {
         return createBannerType(layout,bannerCompileDouble);
-      } else {
-        return createBannerType(layout,bannerCompileSingle);
+      }
+      else
+      {
+        // Normal banner or a big one?
+        if( layout.items[0].fields.options != undefined && layout.items[0].fields.options.indexOf( 'Big banner' ) != -1 )
+        {
+          return createBannerType(layout,bannerCompileBig);
+        }
+        else
+        {
+          return createBannerType(layout,bannerCompileSingle);
+        }
       }
     }
 
@@ -344,7 +357,11 @@ module.exports = function(grunt) {
 
     // get layout then run build processes simultaneously
     fetchLayout().then(function(layout) {
-      return Bluebird.all([createBanner(layout), createResearch(layout), createNews(layout)]);
+      return Bluebird.all( [
+          createBanner(layout),
+          createResearch(layout),
+          createNews(layout)
+      ]);
     }).spread(function(a, b, c) {
       grunt.log.ok('Templates successfully created');
     }).catch(function(err) {
