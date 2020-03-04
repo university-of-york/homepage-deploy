@@ -43,15 +43,6 @@ Handlebars.registerHelper('iconify', function(context) {
 
 module.exports = function(grunt) {
 
-  // log
-  function log(something) {
-    grunt.log.writeln(something);
-  }
-  // stringify json and log
-  function jlog(someJSON) {
-    log(JSON.stringify(someJSON,null,2));
-  }
-
   grunt.registerMultiTask('get', 'Get data from (Contentful) API', function() {
 
     var options = this.options({
