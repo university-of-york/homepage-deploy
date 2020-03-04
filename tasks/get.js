@@ -174,29 +174,35 @@ module.exports = function(grunt) {
     // Get banner item (it's called mastheadItem in Contentful)
     var bannerCompileSingle = compileTemplate('banner_single.hbs');
     var bannerCompileDouble = compileTemplate('banner_double.hbs');
-    var bannerCompileBig = compileTemplate('banner_big.hbs');
+
     var bannerImages = [];
+
+    var bannerOptions =
+    {
+        'Big banner': compileTemplate('banner_big.hbs'),
+        'Festival of Ideas': compileTemplate('banner_foi.hbs'),
+    };
 
     // Banner creation
     function createBanner(layout) {
 
-      // Single or double banner?
+      // Force double banner if 2 items present
       if( layout.items[0].fields.banners.length > 1 )
       {
         return createBannerType(layout,bannerCompileDouble);
       }
-      else
+      
+      // Check for any alternative banner options
+      if( layout.items[0].fields.options != undefined )
       {
-        // Normal banner or a big one?
-        if( layout.items[0].fields.options != undefined && layout.items[0].fields.options.indexOf( 'Big banner' ) != -1 )
+        for( var option in bannerOptions )        
         {
-          return createBannerType(layout,bannerCompileBig);
-        }
-        else
-        {
-          return createBannerType(layout,bannerCompileSingle);
+          if( layout.items[0].fields.options.indexOf( option ) != -1 ) return createBannerType( layout , bannerOptions[ option ] );
         }
       }
+      
+      // Fall back to single banner 
+      return createBannerType(layout,bannerCompileSingle);
     }
 
     function createBannerType(layout,bannerCompile) {
