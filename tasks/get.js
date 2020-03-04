@@ -187,14 +187,12 @@ module.exports = function(grunt) {
     function createBanner(layout) {
 
       // Force double banner if 2 items present
-      if( layout.items[0].fields.banners.length > 1 )
-      {
+      if( layout.items[0].fields.banners.length > 1 ) {
         return createBannerType(layout,bannerCompileDouble);
       }
       
       // Check for any alternative banner options
-      if( layout.items[0].fields.variant != undefined && bannerVariants[ layout.items[0].fields.variant ] != undefined )
-      {
+      if( layout.items[0].fields.variant != undefined && bannerVariants[ layout.items[0].fields.variant ] != undefined ) {
         return createBannerType( layout , bannerVariants[ layout.items[0].fields.variant ] );
       }
       
@@ -262,7 +260,7 @@ module.exports = function(grunt) {
     }
 
     // Get research stories
-    var researchCompile = compileTemplate('research.hbs');
+    var researchCompile = compileTemplate('cards/research.hbs');
     var researchImages = [];
 
     // Research items creation
@@ -306,7 +304,7 @@ module.exports = function(grunt) {
     }
 
     // Get news stories
-    var newsCompile = compileTemplate('news.hbs');
+    var newsCompile = compileTemplate('cards/news.hbs');
     var newsImages = [];
     var categoryUrl = apiUrl;
     categoryUrl+= '&content_type=category';
