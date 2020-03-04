@@ -179,7 +179,7 @@ module.exports = function(grunt) {
 
       // Force double banner if 2 items present
       if( layout.items[0].fields.banners.length > 1 ) {
-        return createBannerType(layout,bannerCompileDouble);
+        return createBannerType( layout , bannerCompileDouble );
       }
       
       // Check for any alternative banner options
@@ -188,10 +188,10 @@ module.exports = function(grunt) {
       }
       
       // Fall back to single banner 
-      return createBannerType(layout,bannerCompileSingle);
+      return createBannerType( layout , bannerCompileSingle );
     }
 
-    function createBannerType(layout,bannerCompile) {
+    function createBannerType( layout , bannerCompile ) {
       return bannerCompile.then(function (bannerTemplate) {
         // Banner template built
 
