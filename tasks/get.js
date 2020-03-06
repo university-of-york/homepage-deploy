@@ -59,6 +59,8 @@ module.exports = function(grunt)
 
         var done = this.async();
 
+        // --------------------------------------------------
+
         var credentials = grunt.file.readJSON( '.ftppass' );
         var spaceId = credentials.contentful.spaceId;
         var accessToken = credentials.contentful.accessToken;
@@ -137,7 +139,7 @@ module.exports = function(grunt)
 
         // --------------------------------------------------
         // Save remote image locally
-        
+
         function saveAsset( thisAsset )
         {
             return new Bluebird( function( resolve , reject )
@@ -163,7 +165,7 @@ module.exports = function(grunt)
 
         // --------------------------------------------------
         // gets specific entry from entries array
-        
+
         function getEntry( entryField , entries )
         {
             if( !entryField ) return false;
@@ -178,17 +180,95 @@ module.exports = function(grunt)
         }
 
         // --------------------------------------------------
+        // Returns a function that renders item partials 
+        // from the fetched content data
 
-        var layoutUrl = apiUrl;
-        layoutUrl+= '&content_type=homepageLayout';
-        layoutUrl+= '&fields.current=true';
-        var layoutRequest = Request( layoutUrl );
+        function renderPartials( templatePath , itemField , outputPath )
+        {
+        	var compiledTemplate = compileTemplate( templatePath );
+        	var images = [];
+
+        	var categoryUrl = apiUrl + '&content_type=category';
+        	var categoryRequest = Request( categoryUrl );
+
+        	return function( layout )
+        	{
+        		return Bluebird.all( [ compiledTemplate , categoryRequest ] )
+        		.spread( function( renderTemplate , categoryData )
+        		{
+        			// Pick out our categories
+        			var categories = JSON.parse( categoryData ).items;
+        			
+        			// Extract items to render
+        			var items = layout.items[ 0 ].fields[ itemField ];
+        			
+        			var assets = layout.includes.Asset;
+        			
+        			function makeItem( i )
+        			{
+        				var entry = getEntry( items[ i ] , layout.includes.Entry );
+        				var output = '<!-- no item '+i+' -->';
+
+        				if( typeof entry != 'undefined' && typeof entry.fields != 'undefined' )
+        				{
+                            var entryData = {};
+
+                            if( entry.fields.image )
+                            {
+                                images[ i ] = getAsset( entry.fields.image , assets );
+                                var thisImage = images[ i ] === false ? false : images[ i ].fields.file.uoyurl;
+                                var thisImageAlt = images[ i ] === false ? false : images[ i ].fields.description;
+                                
+                                entryData.image = thisImage;
+                                entryData.imageAlt = thisImageAlt;
+                            }
+                            
+                            if( entry.fields.category )
+                            {
+        					    var thisCategoryEntry = getEntry( entry.fields.category , categories );
+        					    var thisCategoryName = thisCategoryEntry ? thisCategoryEntry.fields.name : false;
+
+                                entryData.category = thisCategoryName;
+                            }
+
+        					entryData.title = entry.fields.title;
+        					entryData.excerpt = Marked( entry.fields.excerpt );
+        					entryData.link = entry.fields.link;
+        					entryData.publishDate = entry.fields.publishDate;
+
+        					output = renderTemplate( entryData );
+        				}
+        				var path = Path.resolve( options.targetDir , outputPath+'item'+i+'.html' );
+        				return writeFile( path , output );
+        			}
+
+        			// Make HTML snippets and save images locally
+        			var itemsArray = [];
+        			for( var i = 0 ; i < 6 ; i++ )
+        			{
+        				itemsArray.push( makeItem( i ) );
+        				itemsArray.push( saveAsset( images[ i ] ) );
+        			}
+        			return Bluebird.all( itemsArray );
+        		} ).then( function()
+        		{
+        			grunt.log.ok( itemField+' completed' );
+        			return Bluebird.resolve( true );
+        		} ).catch( function( err )
+        		{
+        			fail( err );
+        		} );
+        	};
+        }
 
         // --------------------------------------------------
         // Fetch the current homepage layout
 
         function fetchLayout()
         {
+            var layoutUrl = apiUrl + '&content_type=homepageLayout' + '&fields.current=true';
+            var layoutRequest = Request( layoutUrl );
+
             return layoutRequest.then( function( layoutResponse )
             {
                 var layout = JSON.parse( layoutResponse );
@@ -309,143 +389,21 @@ module.exports = function(grunt)
                 fail( err );
             });
         }
-                
-        // --------------------------------------------------
-        // Get research stories
-
-        var researchCompile = compileTemplate( 'cards/research.hbs' );
-        var researchImages = [];
-
-        // Research items creation
-        function createResearch( layout )
-        {
-            return researchCompile.then( function( researchTemplate )
-            {
-                // Research template built
-                var researchItems = layout.items[ 0 ].fields.researchItems;
-                var researchAssets = layout.includes.Asset;
-                
-                function makeResearchItem( i )
-                {
-                    var researchEntry = getEntry( researchItems[ i ] , layout.includes.Entry );
-                    var researchHtml = '<!-- no story -->';
-                    if( typeof researchEntry != 'undefined' )
-                    {
-                        researchImages[ i ] = getAsset( researchEntry.fields.image , researchAssets );
-                        var thisImage = researchImages[ i ] === false ? false : researchImages[ i ].fields.file.uoyurl;
-                        var thisImageAlt = researchImages[ i ] === false ? false : researchImages[ i ].fields.description;
-                        var researchContext =
-                        {
-                            image: thisImage,
-                            imageAlt: thisImageAlt,
-                            title: researchEntry.fields.title,
-                            excerpt: Marked( researchEntry.fields.excerpt ),
-                            link: researchEntry.fields.link
-                        };
-                        researchHtml = researchTemplate( researchContext );
-                    }
-                    var researchPath = Path.resolve( options.targetDir , 'research/item'+i+'.html' );
-                    return writeFile( researchPath , researchHtml );
-                }
-
-                // Make HTML snippets and save images locally
-                var researchArray = [];
-                for( var i = 0 ; i < 4 ; i++ )
-                {
-                    researchArray.push( makeResearchItem( i ) );
-                    researchArray.push( saveAsset( researchImages[ i ] ) );
-                }
-                
-                return Bluebird.all( researchArray );
-
-            } ).then( function()
-            {
-                grunt.log.ok( 'Research items completed' );
-                return Bluebird.resolve( true );
-            } ).catch( function( err )
-            {
-                fail( err );
-            } );
-        }
-
-        // --------------------------------------------------
-        // Get news stories
-
-        var newsCompile = compileTemplate( 'cards/news.hbs' );
-        var newsImages = [];
-        var categoryUrl = apiUrl;
-        categoryUrl += '&content_type=category';
-        var categoryRequest = Request( categoryUrl );
-
-        // News items creation
-        function createNews( layout )
-        {
-            return Bluebird.all( [ newsCompile , categoryRequest ] )
-            .spread( function( newsTemplate , categoryResponse )
-            {
-                // News template built and categories found
-                var categories = JSON.parse( categoryResponse ).items;
-                var newsItems = layout.items[ 0 ].fields.newsStories;
-                var newsAssets = layout.includes.Asset;
-                
-                function makeNewsItem( i )
-                {
-                    var newsEntry = getEntry( newsItems[ i ] , layout.includes.Entry );
-                    var newsHtml = '<!-- no story -->';
-                    if( typeof newsEntry != 'undefined' )
-                    {
-                        newsImages[ i ] = getAsset( newsEntry.fields.image , newsAssets );
-                        var thisImage = newsImages[ i ] === false ? false : newsImages[ i ].fields.file.uoyurl;
-                        var thisImageAlt = newsImages[ i ] === false ? false : newsImages[ i ].fields.description;
-                        var thisCategoryEntry = getEntry( newsEntry.fields.category , categories );
-                        var thisCategoryName = thisCategoryEntry ? thisCategoryEntry.fields.name : false;
-                        var newsContext =
-                        {
-                            image: thisImage,
-                            imageAlt: thisImageAlt,
-                            title: newsEntry.fields.title,
-                            excerpt: Marked( newsEntry.fields.excerpt ),
-                            link: newsEntry.fields.link,
-                            publishDate: newsEntry.fields.publishDate,
-                            category: thisCategoryName
-                        };
-                        newsHtml = newsTemplate( newsContext );
-                    }
-                    var newsPath = Path.resolve( options.targetDir , 'news/item'+i+'.html' );
-                    return writeFile( newsPath , newsHtml );
-                }
-                // Make HTML snippets and save images locally
-                var newsArray = [];
-                for( var i = 0 ; i < 6 ; i++ )
-                {
-                    newsArray.push( makeNewsItem( i ) );
-                    newsArray.push( saveAsset( newsImages[ i ] ) );
-                }
-                return Bluebird.all( newsArray );
-            } ).then( function()
-            {
-                grunt.log.ok( 'News items completed' );
-                return Bluebird.resolve( true );
-            } ).catch( function( err )
-            {
-                fail( err );
-            } );
-        }
 
         // --------------------------------------------------
         // get layout then run build processes simultaneously
-        
+
         fetchLayout().then( function( layout )
         {
             return Bluebird.all(
             [
                 createBanner( layout ),
-                createResearch( layout ),
-                createNews( layout ),
+                renderPartials( 'cards/research.hbs' , 'researchItems' , 'research/' )( layout ),
+                renderPartials( 'cards/news.hbs' , 'newsStories' , 'news/' )( layout ),
             ] );
         } ).spread( function( a , b , c )
         {
-            grunt.log.ok( 'Templates successfully created' );
+            grunt.log.ok( 'Partials successfully created' );
         } ).catch( function( err )
         {
             fail( err );
