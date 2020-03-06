@@ -198,10 +198,13 @@ module.exports = function(grunt)
         		{
         			// Pick out our categories
         			var categories = JSON.parse( categoryData ).items;
-        			
+                    
         			// Extract items to render
         			var items = layout.items[ 0 ].fields[ itemField ];
-        			
+                    
+                    // Abandon if there are no items to render
+                    if( typeof items == 'undefined' ) return;
+
         			var assets = layout.includes.Asset;
         			
         			function makeItem( i )
@@ -400,6 +403,7 @@ module.exports = function(grunt)
                 createBanner( layout ),
                 renderPartials( 'cards/research.hbs' , 'researchItems' , 'research/' )( layout ),
                 renderPartials( 'cards/news.hbs' , 'newsStories' , 'news/' )( layout ),
+                renderPartials( 'cards/foi.hbs' , 'foiItems' , 'foi/' )( layout ),
             ] );
         } ).spread( function( a , b , c )
         {
