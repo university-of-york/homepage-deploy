@@ -272,21 +272,61 @@ module.exports = function(grunt)
             var layoutUrl = apiUrl + '&content_type=homepageLayout' + '&fields.current=true';
             var layoutRequest = Request( layoutUrl );
 
-            return layoutRequest.then( function( layoutResponse )
-            {
-                var layout = JSON.parse( layoutResponse );
+            var layoutUrl2 = apiUrl + '&content_type=homepagePlusFoILayout' + '&fields.current=true';
+            var layoutRequest2 = Request( layoutUrl2 );
 
+            return Bluebird.all( [ Request( layoutUrl ) , Request( layoutUrl2 ) ] )
+            .spread( function( layoutResponse , layoutResponse2 )
+            {
+                var responses = [ layoutResponse , layoutResponse2 ];
+
+                // Empty placeholder
+                var layout = { items: [] , includes: { Entry: [] , Asset: [] } };
+
+                // Concatenate relevant fields into our placeholder
+                responses.map( function( response )
+                {
+                    var responseLayout = JSON.parse( response );
+                    if( responseLayout.items.length > 0 )
+                    {
+                        layout.items = layout.items.concat( responseLayout.items );
+                        if( responseLayout.includes.Entry.length > 0 ) layout.includes.Entry = layout.includes.Entry.concat( responseLayout.includes.Entry );
+                        if( responseLayout.includes.Asset.length > 0 ) layout.includes.Asset = layout.includes.Asset.concat( responseLayout.includes.Asset );
+                    }
+                } );
+
+                if( layout.items.length === 0 ) return Bluebird.reject( 'There are no current layouts' );
+                if( layout.items.length > 1 ) return Bluebird.reject( 'There are too many current layouts' );
+                
                 grunt.log.ok( 'Current layout fetched' );
 
-                if( layout.total === 0 ) return Bluebird.reject( 'There are no current layouts' );
-                if( layout.total > 1 ) return Bluebird.reject( 'There are too many current layouts' );
-
                 return Bluebird.resolve( layout );
-
+                
             } ).catch( function( err )
             {
                 fail( err );
             } );
+/**/
+            // var layoutUrl = apiUrl + '&content_type=homepageLayout' + '&fields.current=true';
+            // var layoutRequest = Request( layoutUrl );
+            // 
+            // return layoutRequest.then( function( layoutResponse )
+            // {
+            //     var layout = JSON.parse( layoutResponse );
+            // 
+            //     console.log( layoutUrl );
+            // 
+            //     grunt.log.ok( 'Current layout fetched' );
+            // 
+            //     if( layout.items.length === 0 ) return Bluebird.reject( 'There are no current layouts' );
+            //     if( layout.items.length > 1 ) return Bluebird.reject( 'There are too many current layouts' );
+            // 
+            //     return Bluebird.resolve( layout );
+            // 
+            // } ).catch( function( err )
+            // {
+            //     fail( err );
+            // } );
         }
 
         // --------------------------------------------------
@@ -332,7 +372,7 @@ module.exports = function(grunt)
                 // Get content for each banner
                 layout.items[ 0 ].fields.banners.map( bannerItem =>
                 {
-                    var bannerEntry = getEntry(bannerItem, layout.includes.Entry);
+                    var bannerEntry = getEntry( bannerItem , layout.includes.Entry );
                     var bannerAssets = layout.includes.Asset;
 
                     var bannerImage = false;
