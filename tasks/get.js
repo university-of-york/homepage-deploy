@@ -65,6 +65,7 @@ module.exports = function(grunt)
         var spaceId = credentials.contentful.spaceId;
         var accessToken = credentials.contentful.accessToken;
         var apiUrl = 'https://cdn.contentful.com/spaces/'+spaceId+'/entries?access_token='+accessToken;
+        var contentTypes = [ 'homepageLayout' , 'homepagePlusFoILayout' ];
 
         // --------------------------------------------------
         // We'll call this if it all goes wrong
@@ -269,17 +270,18 @@ module.exports = function(grunt)
 
         function fetchLayout()
         {
-            var layoutUrl = apiUrl + '&content_type=homepageLayout' + '&fields.current=true';
-            var layoutRequest = Request( layoutUrl );
-
-            var layoutUrl2 = apiUrl + '&content_type=homepagePlusFoILayout' + '&fields.current=true';
-            var layoutRequest2 = Request( layoutUrl2 );
-
-            return Bluebird.all( [ Request( layoutUrl ) , Request( layoutUrl2 ) ] )
-            .spread( function( layoutResponse , layoutResponse2 )
+            var requests = contentTypes.reduce( function( allRequests , contentType )
             {
-                var responses = [ layoutResponse , layoutResponse2 ];
+                var layoutUrl = apiUrl + '&content_type=' + contentType + '&fields.current=true';
+                var layoutRequest = Request( layoutUrl );
+               
+                allRequests.push( layoutRequest );
+                
+                return allRequests;
+            } , [] );
 
+            return Bluebird.all( requests ).spread( function( ...responses )
+            {
                 // Empty placeholder
                 var layout = { items: [] , includes: { Entry: [] , Asset: [] } };
 
@@ -297,8 +299,10 @@ module.exports = function(grunt)
 
                 if( layout.items.length === 0 ) return Bluebird.reject( 'There are no current layouts' );
                 if( layout.items.length > 1 ) return Bluebird.reject( 'There are too many current layouts' );
+
+                var type = layout.items[ 0 ].sys.contentType.sys.id;
                 
-                grunt.log.ok( 'Current layout fetched' );
+                grunt.log.ok( 'Current layout fetched ('+type+')' );
 
                 return Bluebird.resolve( layout );
                 
@@ -306,64 +310,43 @@ module.exports = function(grunt)
             {
                 fail( err );
             } );
-/**/
-            // var layoutUrl = apiUrl + '&content_type=homepageLayout' + '&fields.current=true';
-            // var layoutRequest = Request( layoutUrl );
-            // 
-            // return layoutRequest.then( function( layoutResponse )
-            // {
-            //     var layout = JSON.parse( layoutResponse );
-            // 
-            //     console.log( layoutUrl );
-            // 
-            //     grunt.log.ok( 'Current layout fetched' );
-            // 
-            //     if( layout.items.length === 0 ) return Bluebird.reject( 'There are no current layouts' );
-            //     if( layout.items.length > 1 ) return Bluebird.reject( 'There are too many current layouts' );
-            // 
-            //     return Bluebird.resolve( layout );
-            // 
-            // } ).catch( function( err )
-            // {
-            //     fail( err );
-            // } );
         }
 
         // --------------------------------------------------
 
-        var bannerCompileSingle = compileTemplate( 'banner/single.hbs' );
-        var bannerCompileDouble = compileTemplate( 'banner/double.hbs' );
+        var bannerCompileSingle = compileTemplate( 'banners/single.hbs' );
+        var bannerCompileDouble = compileTemplate( 'banners/double.hbs' );
 
         var bannerVariants =
         {
-            'Big banner': compileTemplate( 'banner/big.hbs' ),
-            'Festival of Ideas': compileTemplate( 'banner/foi.hbs' ),
+            'Big banner': compileTemplate( 'banners/big.hbs' ),
+            'Festival of Ideas': compileTemplate( 'banners/foi.hbs' ),
         };
 
         var bannerImages = [];
     
         // Banner creation
-        function createBanner( layout )
+        function createBanner( layout , outputPath )
         {
             // Force double banner if 2 items present
             if( layout.items[ 0 ].fields.banners.length > 1 )
             {
-                return createBannerType( layout , bannerCompileDouble );
+                return createBannerType( layout , bannerCompileDouble , outputPath );
             }
 
             // Check for any alternative banner options
             if( layout.items[ 0 ].fields.variant != undefined && bannerVariants[ layout.items[ 0 ].fields.variant ] != undefined )
             {
-                return createBannerType( layout , bannerVariants[ layout.items[ 0 ].fields.variant ] );
+                return createBannerType( layout , bannerVariants[ layout.items[ 0 ].fields.variant ] , outputPath );
             }
 
             // Fall back to single banner 
-            return createBannerType( layout , bannerCompileSingle );
+            return createBannerType( layout , bannerCompileSingle , outputPath );
         }
 
         // --------------------------------------------------
 
-        function createBannerType( layout , bannerCompile )
+        function createBannerType( layout , bannerCompile , outputPath )
         {
             return bannerCompile.then( function( bannerTemplate )
             {
@@ -413,7 +396,7 @@ module.exports = function(grunt)
                 fail(err);
             } ).then( function( bannerHtml )
             {
-                var bannerPath = Path.resolve( options.targetDir , 'banner/index.html' );
+                var bannerPath = Path.resolve( options.targetDir , outputPath );
                 return writeFile( bannerPath , bannerHtml );
             } ).then( function()
             {
@@ -440,7 +423,8 @@ module.exports = function(grunt)
         {
             return Bluebird.all(
             [
-                createBanner( layout ),
+                createBanner( layout , 'banner/index.html' ),
+                // renderOptionalSection( layout , 'foi/index.html' , ),
                 renderPartials( 'cards/research.hbs' , 'researchItems' , 'research/' )( layout ),
                 renderPartials( 'cards/news.hbs' , 'newsStories' , 'news/' )( layout ),
                 renderPartials( 'cards/foi.hbs' , 'foiItems' , 'foi/' )( layout ),
