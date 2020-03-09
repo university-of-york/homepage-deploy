@@ -270,6 +270,7 @@ module.exports = function(grunt)
 
         function fetchLayout()
         {
+            // Make an array of Requests for all our content types
             var requests = contentTypes.reduce( function( allRequests , contentType )
             {
                 var layoutUrl = apiUrl + '&content_type=' + contentType + '&fields.current=true';
@@ -280,6 +281,7 @@ module.exports = function(grunt)
                 return allRequests;
             } , [] );
 
+            // Retrieve our content
             return Bluebird.all( requests ).spread( function( ...responses )
             {
                 // Empty placeholder
