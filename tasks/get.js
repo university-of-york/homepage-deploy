@@ -181,6 +181,39 @@ module.exports = function(grunt)
         }
 
         // --------------------------------------------------
+        // Returns a function that renders optional sections
+
+        function renderSection( layout , templatePath , outputPath , condition )
+        {
+            var sectionPath = Path.resolve( options.targetDir , outputPath );
+
+            // Render an empty section if condition returns false
+            if( !condition( layout ) )
+            {
+                return writeFile( sectionPath , '' );
+            }
+
+
+            var compiledTemplate = compileTemplate( templatePath );
+            
+            return Bluebird.all( [ compiledTemplate ] )
+            .spread( function( renderTemplate )
+            {
+                var output = renderTemplate( {} );
+                return writeFile( sectionPath , output );
+            } );
+
+            // var renderTemplate = compileTemplate( templatePath );
+            // 
+            // return renderTemplate( {} )
+            // .then( function( output )
+            // {
+            //     return writeFile( sectionPath , output );
+            // } );
+          
+        }
+
+        // --------------------------------------------------
         // Returns a function that renders item partials 
         // from the fetched content data
 
@@ -302,9 +335,9 @@ module.exports = function(grunt)
                 if( layout.items.length === 0 ) return Bluebird.reject( 'There are no current layouts' );
                 if( layout.items.length > 1 ) return Bluebird.reject( 'There are too many current layouts' );
 
-                var type = layout.items[ 0 ].sys.contentType.sys.id;
+                layout.contentType = layout.items[ 0 ].sys.contentType.sys.id;
                 
-                grunt.log.ok( 'Current layout fetched ('+type+')' );
+                grunt.log.ok( 'Current layout fetched ('+layout.contentType+')' );
 
                 return Bluebird.resolve( layout );
                 
@@ -322,7 +355,6 @@ module.exports = function(grunt)
         var bannerVariants =
         {
             'Big banner': compileTemplate( 'banners/big.hbs' ),
-            'Festival of Ideas': compileTemplate( 'banners/foi.hbs' ),
         };
 
         var bannerImages = [];
@@ -337,9 +369,9 @@ module.exports = function(grunt)
             }
 
             // Check for any alternative banner options
-            if( layout.items[ 0 ].fields.variant != undefined && bannerVariants[ layout.items[ 0 ].fields.variant ] != undefined )
+            if( layout.items[ 0 ].fields.bannerVariant != undefined && bannerVariants[ layout.items[ 0 ].fields.bannerVariant ] != undefined )
             {
-                return createBannerType( layout , bannerVariants[ layout.items[ 0 ].fields.variant ] , outputPath );
+                return createBannerType( layout , bannerVariants[ layout.items[ 0 ].fields.bannerVariant ] , outputPath );
             }
 
             // Fall back to single banner 
@@ -426,12 +458,12 @@ module.exports = function(grunt)
             return Bluebird.all(
             [
                 createBanner( layout , 'banner/index.html' ),
-                // renderOptionalSection( layout , 'foi/index.html' , ),
+                renderSection( layout , 'sections/foi.hbs' , 'foi/index.html' , function( layout ){ return layout.contentType == 'homepagePlusFoILayout'; } ),
                 renderPartials( 'cards/research.hbs' , 'researchItems' , 'research/' )( layout ),
                 renderPartials( 'cards/news.hbs' , 'newsStories' , 'news/' )( layout ),
                 renderPartials( 'cards/foi.hbs' , 'foiItems' , 'foi/' )( layout ),
             ] );
-        } ).spread( function( a , b , c )
+        } ).spread( function( ...things )
         {
             grunt.log.ok( 'Partials successfully created' );
         } ).catch( function( err )
