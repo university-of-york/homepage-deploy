@@ -196,21 +196,11 @@ module.exports = function(grunt)
 
             var compiledTemplate = compileTemplate( templatePath );
             
-            return Bluebird.all( [ compiledTemplate ] )
-            .spread( function( renderTemplate )
+            return compiledTemplate.then( function( renderTemplate )
             {
                 var output = renderTemplate( {} );
                 return writeFile( sectionPath , output );
             } );
-
-            // var renderTemplate = compileTemplate( templatePath );
-            // 
-            // return renderTemplate( {} )
-            // .then( function( output )
-            // {
-            //     return writeFile( sectionPath , output );
-            // } );
-          
         }
 
         // --------------------------------------------------
