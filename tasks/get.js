@@ -8,7 +8,8 @@ var Path = require('path');
 var Mkdirp = require('mkdirp');
 var Moment = require('moment');
 var Marked = require('marked');
-var Request = require('request-promise');
+var RequestPromise = require('request-promise');
+var Request = require('request');
 var Bluebird = require('bluebird');
 var Handlebars = require('handlebars');
 
@@ -153,7 +154,7 @@ module.exports = function(grunt)
 
                 if( saveTarget.indexOf( '//' ) === 0 ) saveTarget = 'https:'+saveTarget;
 
-                Request( saveTarget , { encoding: 'binary' } , function( err , response , body )
+                RequestPromise( saveTarget , { encoding: 'binary' } , function( err , response , body )
                 {
                     if( err ) reject( saveTarget+' could not be read' );
                     
@@ -213,7 +214,7 @@ module.exports = function(grunt)
         	var images = [];
 
         	var categoryUrl = apiUrl + '&content_type=category';
-        	var categoryRequest = Request( categoryUrl );
+        	var categoryRequest = RequestPromise( categoryUrl );
 
         	return function( layout )
         	{
@@ -297,7 +298,7 @@ module.exports = function(grunt)
             var requests = contentTypes.reduce( function( allRequests , contentType )
             {
                 var layoutUrl = apiUrl + '&content_type=' + contentType + '&fields.current=true';
-                var layoutRequest = Request( layoutUrl );
+                var layoutRequest = RequestPromise( layoutUrl );
                
                 allRequests.push( layoutRequest );
                 
@@ -443,7 +444,10 @@ module.exports = function(grunt)
         // --------------------------------------------------
         // get layout then run build processes simultaneously
 
-        fetchLayout().then( function( layout )
+        fetchLayout().catch( function( err )
+        {
+            fail( err );
+        } ).then( function( layout )
         {
             return Bluebird.all(
             [

@@ -27,6 +27,19 @@ module.exports = function(grunt) {
 
 		credentials: grunt.file.readJSON('.ftppass'),
 
+		http: {
+			published: {
+				options: {
+					url: '<%= credentials.notifications.url %>',
+					method: 'POST',
+					json: true,
+					body: {
+						text: 'A new version of the homepage has been published: https://www.york.ac.uk',
+					},
+				},
+			},
+		},
+
 		sftp: {
 
 			test: {
@@ -126,12 +139,13 @@ module.exports = function(grunt) {
 	grunt.registerTask('test',[
 		'default',
 		'sftp:images',
-		'sftp:test'
+		'sftp:test',
 	]);
 	
 	grunt.registerTask('live',[
 		'sftp:live',
 		'screenshot',
-		'sftp:screenshot'
+		'sftp:screenshot',
+		'http:published'
 	]);
 };
