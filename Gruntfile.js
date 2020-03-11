@@ -142,7 +142,8 @@ module.exports = function(grunt) {
 		'sftp:test',
 	]);
 	
-	grunt.registerTask('live',[
+	grunt.registerTask('deploy',[
+		'default',
 		'sftp:live',
 		'screenshot',
 		'sftp:screenshot',
