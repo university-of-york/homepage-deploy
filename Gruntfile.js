@@ -1,4 +1,6 @@
 
+var Request = require('request');
+
 module.exports = function(grunt) {
 
 	var snippetsURL = 'http://www.york.ac.uk/homepage-snippets/';
@@ -10,11 +12,24 @@ module.exports = function(grunt) {
 	                 ('0' + currentDate.getMinutes()).slice(-2) +
 	                 ('0' + currentDate.getSeconds()).slice(-2);
 
+	var credentials = grunt.file.readJSON('.ftppass');
+	
 	// Project configuration.
+
 	grunt.initConfig({
+
+		credentials: credentials,
 
 		pkg: grunt.file.readJSON('package.json'),
 
+		alert: {
+			slack: {
+				type: 'slack',
+				webhookUrl: credentials.notifications.url,
+				message: '💥😬 Oops - the homepage build failed:\n\n```%s```',
+			},
+		},
+		
 		clean: ['download','upload'],
 
 		bake: {
@@ -25,8 +40,6 @@ module.exports = function(grunt) {
 			}
 		},
 
-		credentials: grunt.file.readJSON('.ftppass'),
-
 		http: {
 			published: {
 				options: {
@@ -34,7 +47,17 @@ module.exports = function(grunt) {
 					method: 'POST',
 					json: true,
 					body: {
-						text: 'A new version of the homepage has been published: https://www.york.ac.uk',
+						text: '✔😎 A new version of the homepage has been published: https://www.york.ac.uk',
+					},
+				},
+			},
+			test: {
+				options: {
+					url: '<%= credentials.notifications.url %>',
+					method: 'POST',
+					json: true,
+					body: {
+						text: '👀🤔 Homepage ready to preview: https://www.york.ac.uk/static/data/homepage/',
 					},
 				},
 			},
@@ -137,12 +160,15 @@ module.exports = function(grunt) {
 	]);
 	
 	grunt.registerTask('test',[
+		'alert.hook',
 		'default',
 		'sftp:images',
 		'sftp:test',
+		'http:test'
 	]);
 	
 	grunt.registerTask('deploy',[
+		'alert.hook',
 		'default',
 		'sftp:live',
 		'screenshot',
