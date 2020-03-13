@@ -15,6 +15,8 @@ var Handlebars = require('handlebars');
 
 var homepageImageDir = "https://www.york.ac.uk/static/data/homepage/images/"
 
+var globalLayout;
+
 // --------------------------------------------------
 // Handlebars helpers
 
@@ -194,7 +196,6 @@ module.exports = function(grunt)
                 return writeFile( sectionPath , '' );
             }
 
-
             var compiledTemplate = compileTemplate( templatePath );
             
             return compiledTemplate.then( function( renderTemplate )
@@ -329,6 +330,8 @@ module.exports = function(grunt)
                 layout.contentType = layout.items[ 0 ].sys.contentType.sys.id;
                 
                 grunt.log.ok( 'Current layout fetched ('+layout.contentType+')' );
+
+                globalLayout = layout;
 
                 return Bluebird.resolve( layout );
                 
@@ -465,6 +468,17 @@ module.exports = function(grunt)
             fail( err );
         } ).then( function()
         {
+            grunt.task.run( [ 'bake' ] );
+            
+            var onComplete = globalLayout.items[ 0 ].fields.onPublish;
+            
+            switch( onComplete )
+            {
+                case 'Generate a preview' : grunt.task.run( [ 'preview' ] ); break;
+                case 'Deploy to live' : grunt.task.run( [ 'deploy' ] ); break;
+                case 'Error test' : grunt.fail.fatal( 'Don\'t panic; I\'m just testing the error notification.' ); break;
+            }
+            
             done();
         } );
 

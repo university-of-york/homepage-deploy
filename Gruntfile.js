@@ -1,6 +1,4 @@
 
-var Request = require('request');
-
 module.exports = function(grunt) {
 
 	var snippetsURL = 'http://www.york.ac.uk/homepage-snippets/';
@@ -154,14 +152,15 @@ module.exports = function(grunt) {
 	// Tasks
 
 	grunt.registerTask('default',[
+		'alert.hook',
 		'clean',
 		'get',
-		'bake'
+		// 'bake' // Now triggered by the `get` task
 	]);
 	
-	grunt.registerTask('test',[
+	grunt.registerTask('preview',[
 		'alert.hook',
-		'default',
+		// 'default',
 		'sftp:images',
 		'sftp:test',
 		'http:test'
@@ -169,7 +168,7 @@ module.exports = function(grunt) {
 	
 	grunt.registerTask('deploy',[
 		'alert.hook',
-		'default',
+		// 'default',
 		'sftp:live',
 		'screenshot',
 		'sftp:screenshot',
