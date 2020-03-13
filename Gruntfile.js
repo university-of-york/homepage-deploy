@@ -155,23 +155,23 @@ module.exports = function(grunt) {
 		'alert.hook',
 		'clean',
 		'get',
-		// 'bake' // Now triggered by the `get` task
+		// 'bake', // Now triggered by the `get` task
 	]);
 	
 	grunt.registerTask('preview',[
 		'alert.hook',
-		// 'default',
+		// 'default', // Now triggered by the `get` task
 		'sftp:images',
 		'sftp:test',
-		'http:test'
+		'http:test',
 	]);
 	
 	grunt.registerTask('deploy',[
 		'alert.hook',
-		// 'default',
+		// 'default', // Now triggered by the `get` task
 		'sftp:live',
 		'screenshot',
 		'sftp:screenshot',
-		'http:published'
+		'http:published',
 	]);
 };
