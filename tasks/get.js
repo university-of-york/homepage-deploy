@@ -472,6 +472,8 @@ module.exports = function(grunt)
             
             var onComplete = globalLayout.items[ 0 ].fields.onPublish;
             
+            console.log( 'When complete: ' + onComplete );
+            
             switch( onComplete )
             {
                 case 'Generate a preview' : grunt.task.run( [ 'preview' ] ); break;
