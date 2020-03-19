@@ -1,3 +1,5 @@
+⚠ All this will be changing very soon!
+
 # Deploying homepage changes
 
 [![Build Status](https://semaphoreci.com/api/v1/university-of-york/homepage-deploy/branches/master/badge.svg)](https://semaphoreci.com/university-of-york/homepage-deploy)
