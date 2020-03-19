@@ -349,6 +349,7 @@ module.exports = function(grunt)
         var bannerVariants =
         {
             'Big banner': compileTemplate( 'banners/big.hbs' ),
+            'Clearing': compileTemplate( 'banners/clearing.hbs' ),
         };
 
         var bannerImages = [];
