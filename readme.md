@@ -1,5 +1,3 @@
-⚠ All this will be changing very soon!
-
 # Deploying homepage changes
 
 [![Build Status](https://semaphoreci.com/api/v1/university-of-york/homepage-deploy/branches/master/badge.svg)](https://semaphoreci.com/university-of-york/homepage-deploy)
@@ -53,32 +51,26 @@ See the [documentation in the SMDC wiki](https://wiki.york.ac.uk/display/SMDC/Ho
 
 ### Step 2: Preview your changes
 
-From your local copy of the repository, run `grunt test`.
+Make sure that the _publish on..._ field for the current content is set to `Generate a preview`.
+
+From your local copy of the repository, run `grunt` to launch the build task.
 
 This will get the current content from Contentful, incorporate it into index.shtml in the 'upload' folder, and SFTP the result to [http://www.york.ac.uk/static/data/homepage/](http://www.york.ac.uk/static/data/homepage/).
 
+A notification will be sent to the [homepage_publishing Slack channel](https://uoy.slack.com/archives/GUGJZ9F8S) on success, or if an error occurs.
+
 ### Step 3: Deploy to live
 
-Run `grunt live` to make the changes live. You'll be asked to confirm this step.
+Make sure that the _publish on..._ field for the current content is set to `Deploy to live`.
+
+From your local copy of the repository, run `grunt` to launch the build task.
 
 Once the changes are live, a screenshot of the homepage will be taken and stored in [http://www.york.ac.uk/np/screenshots](http://www.york.ac.uk/np/screenshots).
 
+A notification will be sent to the [homepage_publishing Slack channel](https://uoy.slack.com/archives/GUGJZ9F8S) on success, or if an error occurs.
+
 ## Making changes to the homepage template
 
-If changes are needed to parts of the homepage which aren't built by the content from Contentful (recent examples included the inclusion of a the _Cookies_ link in the footer and the addition of tabs to the course search box), you should edit the [homepage layout](./layouts/homepage.html). You should also make the same changes to the alternative homepage layouts below.
+If changes are needed to parts of the homepage which aren't built by the content from Contentful (recent examples included the inclusion of a the _Cookies_ link in the footer and the addition of tabs to the course search box), you should edit the [homepage layout](./layouts/homepage.html) and/or its dependencies in the layout directory.
 
-The team responsible for homepage publishes will also need to be informed, so that they can `git pull` the up-to-date version of the repository.
-
-## Alternative homepage layouts
-
-Occasionally we want to change the layout of the homepage temporarily (for example, due to an event).
-
-We currently have three alternative homepage layouts: [Festival of Ideas](../../tree/foi), [NHS 70th](../../tree/nhs) and [Big Banner](../../tree/big-banner).
-
-The FoI layout adds a row of Festival of of Ideas events under the research stories, the NHS layout adds a blue banner with the NHS logo (used to celebrate the NHS' 70th birthday in 2018) and the Big Banner layout increases the size of the main banner (when we want to showcase a specific photo e.g. for Open Day).
-
-To switch to an alternative layout, check out the relevant branch (e.g. `git checkout foi`) and run `grunt test` and `grunt live` as usual. Note that the FoI layout uses a different content model in Contentful (called _Homepage plus FoI layout_), as there are additional items to add.
-
-**You should make sure that the homepage layout has been updated with any changes made to the master branch**
-
-To create a new alternative layout, branch the master branch, make changes to the homepage layout, and push the changes back to _origin_. Whoever is on homepage duty will need to `checkout` the new branch.
+⚠ Commit messages to this repo should include the text `[skip ci]` or `[ci skip]` to ensure that our CI platform, [Semaphore](https://semaphoreci.com/), doesn't automatically run the build task and accidentally update the homepage.
