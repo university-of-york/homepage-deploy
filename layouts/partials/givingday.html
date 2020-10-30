@@ -1,0 +1,96 @@
+<div class="o-wrapper o-wrapper--wide o-grid">
+  <div class="o-grid__row" id="homepage-banner">
+
+    <div class="o-grid__box o-grid__box--full">
+        <a href="https://unlimited.hubbub.net/" class="c-figure c-figure--banner c-figure--no-margin c-figure--full-width c-figure--big-banner">
+            <img class="c-figure__image" src="https://www.york.ac.uk/static/data/homepage/images/york-unlimited/giving-day-anna-orange-1900x1400.jpg" alt="">
+            <div class="c-figure__content c-figure__content--right c-figure__content--half t-york-unlimited text-center">
+                <h3><img style="width:300px; margin:0 auto;" src="https://www.york.ac.uk/static/data/homepage/images/Giving_Day_Landscape_White_no_padding.png" alt="York Unlimited Giving Day"></h3>
+                <p>The <strong>York Unlimited Giving Day</strong> is here!</p>
+                <p>There are 36 hours on the clock, and some life-changing initiatives at York that need funding. Are you ready to help us create change?</p>
+                
+                <script>
+                document.write( "<p id=\"countdown\"></p>" );
+                var deadline = new Date("Nov 03, 2020 21:00:00").getTime();
+                var timer = setInterval(function()
+                {
+                    var now = new Date().getTime();
+                    var t = deadline - now;
+                    var hours = Math.floor(t / (1000 * 60 * 60));
+                    var minutes = Math.floor((t % (1000 * 60 * 60)) / (1000 * 60));
+                    var seconds = Math.floor((t % (1000 * 60)) / 1000);
+                    
+                    var countdown = "";
+                    countdown += "<i aria-hidden=\"true\" class=\"c-icon c-icon--before c-icon--clock-o\"></i> ";
+                    countdown += "<strong>" + hours + "</strong> hour" + ( hours == 1 ? "" : "s" ) + ", ";
+                    countdown += "<strong>" + minutes + "</strong> minute" + ( minutes == 1 ? "" : "s" ) + " and ";
+                    countdown += "<strong>" + seconds + "</strong> second" + ( seconds == 1 ? "" : "s" ) + " to go.";
+                    
+                    document.getElementById("countdown").innerHTML = countdown;
+                    
+                    if (t < 0)
+                    {
+                        clearInterval( timer );
+                        document.getElementById("countdown").innerHTML = "Time's up!";
+                    }
+                } , 1000 );
+                </script>
+                
+                <p><button class="c-btn c-btn--medium c-btn--block c-btn--secondary" role="button">Get involved with Giving Day</button></p>
+            </div>
+        </a>
+    </div>
+
+  </div>
+</div>
+
+<div class="o-wrapper o-grid">
+
+    <div class="t-york-unlimited">
+      <div class="o-grid__row o-grid__row--alt1  text-left" style="padding-top:20px;">
+        <div class="o-grid__box o-grid__box--full">
+          <h3>Find a Giving Day cause you're passionate about</h3>
+        </div>
+      </div>
+      <div class="o-grid__row o-grid__row--alt1 js-equal-height-row" style="padding-bottom:20px;">
+        <div class="o-grid__box o-grid__box--quarter">
+          <a class="c-panel c-panel-- c-panel--link" href="https://unlimited.hubbub.net/p/mentallyfityork">
+            <div class="c-panel__content">
+              <h3>Mental Health</h3>
+              <p>Mentally Fit York supports on-the-ground initiatives and groundbreaking research into mental health at York.</p>
+              <p class="c-panel__more">Read more</p>
+            </div>
+          </a>
+        </div>
+        <div class="o-grid__box o-grid__box--quarter">
+          <a class="c-panel c-panel-- c-panel--link" href="https://unlimited.hubbub.net/p/yufund">
+            <div class="c-panel__content">
+              <h3>Student Clubs and Societies</h3>
+              <p>YuFund is supporting projects to enhance the student experience at a time when it is being changed beyond recognition.</p>
+              <p class="c-panel__more">Read more</p>
+            </div>
+          </a>
+        </div>
+        <div class="o-grid__box o-grid__box--quarter">
+          <a class="c-panel c-panel-- c-panel--link" href="https://unlimited.hubbub.net/p/equalaccess">
+            <div class="c-panel__content">
+              <h3>Human Rights</h3>
+              <p>Equal Access Scholarships offer students seeking asylum in the UK the chance to access university despite the massive obstacles in their way.</p>
+              <p class="c-panel__more">Read more</p>
+            </div>
+          </a>
+        </div>
+        <div class="o-grid__box o-grid__box--quarter">
+          <div class="c-panel">
+            <div class="c-panel__content">
+              <h3>Scholarships</h3>
+              <p>The York Opportunity Scholarship and the York Futures Scholarship help York students thrive regardless of their socio-economic circumstances.</p>
+              <p><a href="https://unlimited.hubbub.net/p/yorkopportunity">York Opportunity</a></p>
+              <p><a href="https://unlimited.hubbub.net/p/yorkfutures">York Futures</a></p>
+            </div>
+        </div>
+        </div>
+      </div>
+    </div>
+
+</div>
